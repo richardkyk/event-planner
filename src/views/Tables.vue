@@ -11,7 +11,7 @@
       </v-layout>
       <v-layout row wrap>
         <v-flex xs12 sm6 md4 lg3 v-for="table in tables" :key="table.id">
-          <TableLayout v-bind:table="table" @updateGuest="updateGuest($event)" />
+          <TableLayout v-bind:table="table" @updateTable="updateTable($event)" />
         </v-flex>
       </v-layout>
     </v-container>
@@ -54,21 +54,36 @@ export default {
     };
   },
   methods: {
-    updateGuest(payload) {
-      // console.log(payload);
-      let { id, value, type } = payload;
+    updateTable(payload) {
+      let { data, type } = payload;
       switch (type) {
-        case "remove":
-          // console.log(`removing guest at index:${value} from table: ${id} `);
-          this.$delete(this.tables[id - 1].guests, value);
+        case "addGuest": {
+          let { id, name } = data;
+          this.tables[id - 1].guests.push({ name });
           break;
+        }
 
-        case "add":
-          this.tables[id - 1].guests.push({ name: value });
+        case "removeGuest": {
+          let { id, index } = data;
+          this.$delete(this.tables[id - 1].guests, index);
           break;
+        }
 
-        default:
+        case "editGuest": {
+          let { id, index, name } = data;
+          this.tables[id - 1].guests[index].name = name;
           break;
+        }
+
+        case "editTable": {
+          let { id, desc } = data;
+          this.tables[id - 1].desc = desc;
+          break;
+        }
+
+        default: {
+          break;
+        }
       }
     },
     addTable() {
