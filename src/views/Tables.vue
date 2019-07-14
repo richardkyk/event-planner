@@ -39,12 +39,18 @@ export default {
         {
           id: 2,
           desc: "Random peeops",
-          guests: [{ name: "Guest a" }, { name: "Guest b" }]
+          guests: [
+            { name: "Guest a", flight: false, accom: false },
+            { name: "Guest b", flight: false, accom: false }
+          ]
         },
         {
           id: 3,
           desc: "Highschool",
-          guests: [{ name: "Guest World" }, { name: "Guest Hello" }]
+          guests: [
+            { name: "Guest World", flight: false, accom: false },
+            { name: "Guest Hello", flight: false, accom: false }
+          ]
         },
         { id: 4, desc: "Malaysia", guests: [] },
         { id: 5, desc: "", guests: [] },
@@ -59,7 +65,11 @@ export default {
       switch (type) {
         case "addGuest": {
           let { id, name } = data;
-          this.tables[id - 1].guests.push({ name });
+          this.tables[id - 1].guests.push({
+            name,
+            flight: false,
+            accom: false
+          });
           break;
         }
 
@@ -78,6 +88,20 @@ export default {
         case "editTable": {
           let { id, desc } = data;
           this.tables[id - 1].desc = desc;
+          break;
+        }
+
+        case "flight": {
+          let { id, index } = data;
+          this.tables[id - 1].guests[index].flight = !this.tables[id - 1]
+            .guests[index].flight;
+          break;
+        }
+        case "accom": {
+          let { id, index } = data;
+          this.tables[id - 1].guests[index].accom = !this.tables[id - 1].guests[
+            index
+          ].accom;
           break;
         }
 

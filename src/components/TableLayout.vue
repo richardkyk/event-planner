@@ -23,30 +23,33 @@
         </v-flex>
       </v-layout>
 
-      <!-- The list of guests with the expansion -->
+      <!-- The expansion panel for the guests -->
       <v-list>
         <v-list-group v-for="(guest, index) in table.guests" :key="index" no-action>
           <template v-slot:activator>
             <v-list-tile>
               <v-layout row>
-                <v-flex xs2 text-xs-center>
+                <v-flex xs1 text-xs-center mr-1>
                   <v-list-tile-title>{{index+1}}</v-list-tile-title>
                 </v-flex>
-                <v-flex xs10>
+                <v-flex>
                   <v-list-tile-title>{{ guest.name }}</v-list-tile-title>
                 </v-flex>
+                <v-spacer></v-spacer>
+                <v-icon v-if="guest.flight">flight</v-icon>
+                <v-icon v-if="guest.accom">home</v-icon>
               </v-layout>
             </v-list-tile>
           </template>
 
-          <!-- The expansion icons for flight, accomodation, edit and delete -->
+          <!-- The icons for flight, accomodation, edit and delete -->
           <v-list-tile>
             <v-layout row>
               <v-flex text-xs-center>
-                <v-icon>airplanemode_active</v-icon>
+                <v-icon @click="toggleIcon(index, 'flight')">airplanemode_active</v-icon>
               </v-flex>
               <v-flex text-xs-center>
-                <v-icon>home</v-icon>
+                <v-icon @click="toggleIcon(index, 'accom')">home</v-icon>
               </v-flex>
               <v-flex text-xs-center>
                 <v-icon @click.stop="openModal(index, guest.name)">edit</v-icon>
@@ -109,7 +112,7 @@ export default {
     return {
       name: "",
       tableModal: false,
-      tabbleModalDesc: "",
+      tableModalDesc: "",
       guestModal: false,
       guestModalName: "",
       guestModalIndex: null
@@ -155,6 +158,14 @@ export default {
       let payload = { type: "editGuest", data };
       this.$emit("updateTable", payload);
       this.guestModal = false;
+    },
+    toggleIcon(index, type) {
+      let data = {
+        id: this.table.id,
+        index
+      };
+      let payload = { type, data };
+      this.$emit("updateTable", payload);
     }
   }
 };
@@ -163,11 +174,16 @@ export default {
 <style>
 .v-list__tile {
   height: 32px;
+  padding-right: 0px;
 }
 .v-messages {
   min-height: 0px;
 }
 .v-list__group__items--no-action .v-list__tile {
   padding-left: 16px;
+}
+
+.v-list__group__header__append-icon {
+  padding-left: 0px !important;
 }
 </style>
