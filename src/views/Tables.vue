@@ -20,42 +20,47 @@
 
 <script>
 import TableLayout from "@/components/TableLayout";
+import db from "@/fb";
+import Vue from "vue";
+import UUID from "vue-uuid";
+
+Vue.use(UUID);
 
 export default {
   components: { TableLayout },
   data() {
     return {
       tables: [
-        {
-          id: 1,
-          desc: "Khaw familiy",
-          guests: [
-            { name: "Guest 1", flight: false, accom: false },
-            { name: "Guest 2", flight: true, accom: true },
-            { name: "Guest 3", flight: false, accom: true },
-            { name: "Guest 4", flight: true, accom: false }
-          ]
-        },
-        {
-          id: 2,
-          desc: "Random peeops",
-          guests: [
-            { name: "Guest a", flight: false, accom: false },
-            { name: "Guest b", flight: false, accom: false }
-          ]
-        },
-        {
-          id: 3,
-          desc: "Highschool",
-          guests: [
-            { name: "Guest World", flight: false, accom: false },
-            { name: "Guest Hello", flight: false, accom: false }
-          ]
-        },
-        { id: 4, desc: "Malaysia", guests: [] },
-        { id: 5, desc: "", guests: [] },
-        { id: 6, desc: "", guests: [] },
-        { id: 7, desc: "", guests: [] }
+        //     {
+        //       id: 1,
+        //       desc: "Khaw familiy",
+        //       guests: [
+        //         { name: "Guest 1", flight: false, accom: false },
+        //         { name: "Guest 2", flight: true, accom: true },
+        //         { name: "Guest 3", flight: false, accom: true },
+        //         { name: "Guest 4", flight: true, accom: false }
+        //       ]
+        //     },
+        //     {
+        //       id: 2,
+        //       desc: "Random peeops",
+        //       guests: [
+        //         { name: "Guest a", flight: false, accom: false },
+        //         { name: "Guest b", flight: false, accom: false }
+        //       ]
+        //     },
+        //     {
+        //       id: 3,
+        //       desc: "Highschool",
+        //       guests: [
+        //         { name: "Guest World", flight: false, accom: false },
+        //         { name: "Guest Hello", flight: false, accom: false }
+        //       ]
+        //     },
+        //     { id: 4, desc: "Malaysia", guests: [] },
+        //     { id: 5, desc: "", guests: [] },
+        //     { id: 6, desc: "", guests: [] },
+        //     { id: 7, desc: "", guests: [] }
       ]
     };
   },
@@ -64,12 +69,23 @@ export default {
       let { data, type } = payload;
       switch (type) {
         case "addGuest": {
-          let { id, name } = data;
+          let { id, name, uid } = data;
           this.tables[id - 1].guests.push({
             name,
             flight: false,
             accom: false
           });
+
+          // db.collection("guests")
+          //   .add({ table: id, name, flight: false, accom: false })
+          //   .then(() => {
+          //     console.log("added new user");
+          //   });
+
+          // let guestUid = this.tables[id - 1].guests.map(guest => guest.uid);
+          // db.collection("tables")
+          //   .doc(uid)
+          //   .set({ guests: [...guestUid, uid] });
           break;
         }
 
@@ -86,8 +102,11 @@ export default {
         }
 
         case "editTable": {
-          let { id, desc } = data;
+          let { id, desc, uid } = data;
           this.tables[id - 1].desc = desc;
+          db.collection("tables")
+            .doc(uid)
+            .update({ desc });
           break;
         }
 
@@ -111,10 +130,33 @@ export default {
       }
     },
     addTable() {
-      let newId =
-        this.tables.length > 0 ? this.tables[this.tables.length - 1].id + 1 : 1;
-      this.tables.push({ id: newId, desc: "", guests: [] });
+      let newId = this.tables.length + 1;
+      let data = { id: newId, desc: "", guests: [] };
+      db.collection("tables").add(data);
     }
+  },
+
+  created() {
+    // Listener for table changes
+    db.collection("tables")
+      .orderBy("id")
+      .onSnapshot(res => {
+        const changes = res.docChanges();
+        changes.forEach(change => {
+          if (change.type === "added") {
+            this.tables.push({ ...change.doc.data(), uid: change.doc.id });
+          } else if (change.type === "modified") {
+            this.tables[change.oldIndex] = {
+              ...change.doc.data(),
+              uid: change.doc.id
+            };
+            this.$forceUpdate();
+          }
+        });
+      });
+
+    // Listener for guest changes
+    // db.collection("guests")
   }
 };
 </script>

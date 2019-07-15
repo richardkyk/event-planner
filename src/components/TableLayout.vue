@@ -121,7 +121,7 @@ export default {
   methods: {
     addGuest() {
       // console.log(this.table.id);
-      let data = { id: this.table.id, name: this.name };
+      let data = { id: this.table.id, name: this.name, uid: this.table.uid };
       let payload = { type: "addGuest", data };
       this.$emit("updateTable", payload);
       this.name = "";
@@ -144,7 +144,11 @@ export default {
       this.$nextTick(this.$refs.tableText.focus);
     },
     editTable() {
-      let data = { id: this.table.id, desc: this.tableModalDesc };
+      let data = {
+        id: this.table.id,
+        desc: this.tableModalDesc,
+        uid: this.table.uid
+      };
       let payload = { type: "editTable", data };
       this.$emit("updateTable", payload);
       this.tableModal = false;
