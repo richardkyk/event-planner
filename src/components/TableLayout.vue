@@ -25,7 +25,7 @@
 
       <!-- The expansion panel for the guests -->
       <v-list>
-        <v-list-group v-for="(guest, index) in table.guests" :key="index" no-action>
+        <v-list-group v-for="(guest, index) in table.orderedGuests" :key="index" no-action>
           <template v-slot:activator>
             <v-list-tile>
               <v-layout row>
@@ -145,7 +145,6 @@ export default {
     },
     editTable() {
       let data = {
-        id: this.table.id,
         desc: this.tableModalDesc,
         uid: this.table.uid
       };
