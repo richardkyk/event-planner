@@ -46,16 +46,16 @@
           <v-list-tile>
             <v-layout row>
               <v-flex text-xs-center>
-                <v-icon @click="toggleIcon(index, 'flight')">airplanemode_active</v-icon>
+                <v-icon @click="toggleIcon(guest.uid, 'flight', !guest.flight)">airplanemode_active</v-icon>
               </v-flex>
               <v-flex text-xs-center>
-                <v-icon @click="toggleIcon(index, 'accom')">home</v-icon>
+                <v-icon @click="toggleIcon(guest.uid, 'accom', !guest.accom)">home</v-icon>
               </v-flex>
               <v-flex text-xs-center>
-                <v-icon @click.stop="openModal(index, guest.name)">edit</v-icon>
+                <v-icon @click.stop="openModal(guest.uid, guest.name)">edit</v-icon>
               </v-flex>
               <v-flex text-xs-center>
-                <v-icon @click="removeGuest(index)">delete</v-icon>
+                <v-icon @click="removeGuest(guest.uid)">delete</v-icon>
               </v-flex>
             </v-layout>
           </v-list-tile>
@@ -68,14 +68,14 @@
               class="mx-3"
               ref="tableText"
               v-model="tableModalDesc"
-              v-on:keyup.enter="editTable"
+              v-on:keyup.enter="editTableDesc"
             ></v-text-field>
             <v-layout row justify-space-between>
               <v-card-actions>
                 <v-btn flat color="primary" @click.stop="tableModal = false">Close</v-btn>
               </v-card-actions>
               <v-card-actions>
-                <v-btn flat color="primary" @click.stop="editTable()">Submit</v-btn>
+                <v-btn flat color="primary" @click.stop="editTableDesc()">Submit</v-btn>
               </v-card-actions>
             </v-layout>
           </v-card>
@@ -115,25 +115,31 @@ export default {
       tableModalDesc: "",
       guestModal: false,
       guestModalName: "",
-      guestModalIndex: null
+      guestModalUid: null
     };
   },
   methods: {
     addGuest() {
-      // console.log(this.table.id);
-      let data = { id: this.table.id, name: this.name, uid: this.table.uid };
-      let payload = { type: "addGuest", data };
+      const data = {
+        tableId: this.table.id,
+        tableUid: this.table.uid,
+        name: this.name
+      };
+      const payload = { type: "addGuest", data };
       this.$emit("updateTable", payload);
       this.name = "";
     },
-    removeGuest(index) {
-      // console.log(this.table.id, index);
-      let data = { id: this.table.id, index };
-      let payload = { type: "removeGuest", data };
+    removeGuest(guestUid) {
+      const data = {
+        tableUid: this.table.uid,
+        tableId: this.table.id,
+        guestUid
+      };
+      const payload = { type: "removeGuest", data };
       this.$emit("updateTable", payload);
     },
-    openModal(index, name) {
-      this.guestModalIndex = index;
+    openModal(guestUid, name) {
+      this.guestModalUid = guestUid;
       this.guestModalName = name;
       this.guestModal = true;
       this.$nextTick(this.$refs.guestText.focus);
@@ -143,31 +149,33 @@ export default {
       this.tableModal = true;
       this.$nextTick(this.$refs.tableText.focus);
     },
-    editTable() {
-      let data = {
+    editTableDesc() {
+      const data = {
         desc: this.tableModalDesc,
         uid: this.table.uid
       };
-      let payload = { type: "editTable", data };
+      const payload = { type: "editTableDesc", data };
       this.$emit("updateTable", payload);
       this.tableModal = false;
     },
     editGuest() {
-      let data = {
-        id: this.table.id,
-        index: this.guestModalIndex,
-        name: this.guestModalName
+      const data = {
+        guestUid: this.guestModalUid,
+        propName: "name",
+        value: this.guestModalName
       };
-      let payload = { type: "editGuest", data };
+      const payload = { type: "editGuest", data };
       this.$emit("updateTable", payload);
       this.guestModal = false;
     },
-    toggleIcon(index, type) {
-      let data = {
-        id: this.table.id,
-        index
+    toggleIcon(guestUid, type, value) {
+      const data = {
+        guestUid,
+        propName: type,
+        value
       };
-      let payload = { type, data };
+      // console.log(data);
+      const payload = { type: "editGuest", data };
       this.$emit("updateTable", payload);
     }
   }

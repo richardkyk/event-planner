@@ -48,7 +48,7 @@ export default {
   methods: {
     sortTables() {
       this.tables.forEach((table, index) => {
-        let newGuests = [];
+        const newGuests = [];
         table.guests.forEach(uid => {
           let data = this.guests.filter(guest => {
             return guest.uid === uid;
@@ -61,24 +61,29 @@ export default {
       });
     },
     updateTable(payload) {
-      let { data, type } = payload;
+      const { data, type } = payload;
       switch (type) {
         case "addGuest": {
-          let { id, name, uid } = data;
-          let guestUid = this.$uuid.v4();
-          let guestData = {
+          const { tableId, tableUid, name } = data;
+
+          // Creating uid so I can update the table array as well as the guest db
+          const guestUid = this.$uuid.v4();
+          const guestData = {
+            table: tableId,
             name,
             flight: false,
             accom: false,
             rsvp: ""
           };
 
-          let batch = db.batch();
-          let guestRef = db.collection("guests").doc(guestUid);
-          batch.set(guestRef, { ...guestData, table: id });
+          // Creating the guest object in db
+          const batch = db.batch();
+          const guestRef = db.collection("guests").doc(guestUid);
+          batch.set(guestRef, guestData);
 
-          let tableRef = db.collection("tables").doc(uid);
-          let guestsUid = this.tables[id - 1].guests;
+          // Adding the guest uid reference to tables guest array
+          const tableRef = db.collection("tables").doc(tableUid);
+          const guestsUid = this.tables[tableId - 1].guests;
           batch.update(tableRef, { guests: [...guestsUid, guestUid] });
 
           batch.commit();
@@ -86,36 +91,50 @@ export default {
         }
 
         case "removeGuest": {
-          let { id, index } = data;
-          this.$delete(this.tables[id - 1].guests, index);
+          const { tableId, tableUid, guestUid } = data;
+
+          // Deleting the guest reference
+          const batch = db.batch();
+          const guestRef = db.collection("guests").doc(guestUid);
+          batch.delete(guestRef);
+
+          // Copying the guests array, filtering out the deleted guest, and updating the table
+          const tableRef = db.collection("tables").doc(tableUid);
+          const newGuests = this.tables[tableId - 1].guests.filter(
+            uid => uid != guestUid
+          );
+          batch.update(tableRef, { guests: newGuests });
+
+          batch.commit();
           break;
         }
 
-        case "editGuest": {
-          let { id, index, name } = data;
-          this.tables[id - 1].guests[index].name = name;
-          break;
-        }
+        // case "editGuest": {
+        //   const { guestUid, name } = data;
+        //   // this.tables[id - 1].guests[index].name = name;
+        //   db.collection("guests")
+        //     .doc(guestUid)
+        //     .update({ name });
 
-        case "editTable": {
-          let { desc, uid } = data;
+        //   break;
+        // }
+
+        case "editTableDesc": {
+          const { desc, uid } = data;
           db.collection("tables")
             .doc(uid)
             .update({ desc });
           break;
         }
 
-        case "flight": {
-          let { id, index } = data;
-          this.tables[id - 1].guests[index].flight = !this.tables[id - 1]
-            .guests[index].flight;
-          break;
-        }
-        case "accom": {
-          let { id, index } = data;
-          this.tables[id - 1].guests[index].accom = !this.tables[id - 1].guests[
-            index
-          ].accom;
+        case "editGuest": {
+          const { guestUid, propName, value } = data;
+
+          db.collection("guests")
+            .doc(guestUid)
+            .update({ [propName]: value });
+          // this.tables[id - 1].guests[index].flight = !this.tables[id - 1]
+          //   .guests[index].flight;
           break;
         }
 
@@ -125,8 +144,8 @@ export default {
       }
     },
     addTable() {
-      let newId = this.tables.length + 1;
-      let data = { id: newId, desc: "", guests: [] };
+      const newId = this.tables.length + 1;
+      const data = { id: newId, desc: "", guests: [] };
       db.collection("tables").add(data);
     }
   },
@@ -141,13 +160,16 @@ export default {
           if (change.type === "added") {
             this.tables.push({ ...change.doc.data(), uid: change.doc.id });
           } else if (change.type === "modified") {
-            this.$set(this.tables, change.oldIndex, {
+            const index = this.tables
+              .map(table => table.uid)
+              .indexOf(change.doc.id);
+            this.$set(this.tables, index, {
               ...change.doc.data(),
               uid: change.doc.id
             });
           }
-          this.sortTables();
         });
+        this.sortTables();
       });
 
     // Listener for guest changes
@@ -157,7 +179,13 @@ export default {
         if (change.type === "added") {
           this.guests.push({ ...change.doc.data(), uid: change.doc.id });
         } else if (change.type === "modified") {
-          null;
+          const index = this.guests
+            .map(guest => guest.uid)
+            .indexOf(change.doc.id);
+          this.$set(this.guests, index, {
+            ...change.doc.data(),
+            uid: change.doc.id
+          });
         }
       });
       this.sortTables();
