@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <v-container class="my-5">
-      <v-layout row class="mb-3">
+      <v-layout row class="mb-3" wrap>
         <v-btn small flat color="grey" @click="sortBy('name')">
           <v-icon left small>person</v-icon>
           <span class="caption">By name</span>
@@ -36,11 +36,11 @@
           </v-flex>
           <v-flex xs6 sm4 md2>
             <div class="caption grey--text">Accomodation</div>
-            <div>{{guest.accom}}</div>
+            <div v-if="guest.accom">{{guest.accom}}</div>
           </v-flex>
           <v-flex xs6 sm4 md2>
             <div class="caption grey--text">Flight</div>
-            <div>{{guest.flight}}</div>
+            <div v-if="guest.flight">{{guest.flight}}</div>
           </v-flex>
           <v-flex xs6 sm4 md1>
             <!-- So we can have Unsent, Sent, Accepted, Declined -->
@@ -82,8 +82,23 @@ export default {
         .update({ rsvp: this.guests[index].rsvp });
     },
     sortBy(prop) {
-      this.guests.sort((a, b) => (a[prop] < b[prop] ? -1 : 1));
-      this.$forceUpdate();
+      const sortOrders = {
+        flight: { true: 1, false: 2 },
+        rsvp: { unsent: 1, sent: 2, accepted: 3, declined: 4 },
+        accom: { true: 1, false: 2 }
+      };
+      switch (prop) {
+        case "flight":
+        case "accom":
+        case "rsvp":
+          this.guests.sort((a, b) => {
+            return sortOrders[prop][a[prop]] - sortOrders[prop][b[prop]];
+          });
+          break;
+        default:
+          this.guests.sort((a, b) => (a[prop] < b[prop] ? -1 : 1));
+          break;
+      }
     }
   },
   created() {
