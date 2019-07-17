@@ -31,18 +31,7 @@ export default {
   data() {
     return {
       guests: [],
-      tables: [
-        //     {
-        //       id: 1,
-        //       desc: "Khaw familiy",
-        //       guests: [
-        //         { name: "Guest 1", flight: false, accom: false },
-        //         { name: "Guest 2", flight: true, accom: true },
-        //         { name: "Guest 3", flight: false, accom: true },
-        //         { name: "Guest 4", flight: true, accom: false }
-        //       ]
-        //     }
-      ]
+      tables: []
     };
   },
   methods: {
@@ -73,7 +62,7 @@ export default {
             name,
             flight: false,
             accom: false,
-            rsvp: ""
+            rsvp: "unsent"
           };
 
           // Creating the guest object in db
@@ -92,7 +81,6 @@ export default {
 
         case "removeGuest": {
           const { tableId, tableUid, guestUid } = data;
-
           // Deleting the guest reference
           const batch = db.batch();
           const guestRef = db.collection("guests").doc(guestUid);
@@ -109,32 +97,20 @@ export default {
           break;
         }
 
-        // case "editGuest": {
-        //   const { guestUid, name } = data;
-        //   // this.tables[id - 1].guests[index].name = name;
-        //   db.collection("guests")
-        //     .doc(guestUid)
-        //     .update({ name });
-
-        //   break;
-        // }
-
-        case "editTableDesc": {
-          const { desc, uid } = data;
-          db.collection("tables")
-            .doc(uid)
-            .update({ desc });
-          break;
-        }
-
         case "editGuest": {
           const { guestUid, propName, value } = data;
 
           db.collection("guests")
             .doc(guestUid)
             .update({ [propName]: value });
-          // this.tables[id - 1].guests[index].flight = !this.tables[id - 1]
-          //   .guests[index].flight;
+          break;
+        }
+
+        case "editTableDesc": {
+          const { desc, uid } = data;
+          db.collection("tables")
+            .doc(uid)
+            .update({ desc });
           break;
         }
 
@@ -176,16 +152,18 @@ export default {
     db.collection("guests").onSnapshot(res => {
       const changes = res.docChanges();
       changes.forEach(change => {
+        const uid = change.doc.id;
         if (change.type === "added") {
-          this.guests.push({ ...change.doc.data(), uid: change.doc.id });
+          this.guests.push({ ...change.doc.data(), uid });
         } else if (change.type === "modified") {
-          const index = this.guests
-            .map(guest => guest.uid)
-            .indexOf(change.doc.id);
+          const index = this.guests.map(guest => guest.uid).indexOf(uid);
           this.$set(this.guests, index, {
             ...change.doc.data(),
-            uid: change.doc.id
+            uid
           });
+        } else if (change.type === "removed") {
+          const index = this.guests.map(guest => guest.uid).indexOf(uid);
+          this.$delete(this.guests, index);
         }
       });
       this.sortTables();
