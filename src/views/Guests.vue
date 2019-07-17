@@ -1,7 +1,29 @@
 <template>
   <div class="home">
-    <h1 class="subheading grey--text">Guests</h1>
     <v-container class="my-5">
+      <v-layout row class="mb-3">
+        <v-btn small flat color="grey" @click="sortBy('name')">
+          <v-icon left small>person</v-icon>
+          <span class="caption">By name</span>
+        </v-btn>
+        <v-btn small flat color="grey" @click="sortBy('table')">
+          <v-icon left small>local_dining</v-icon>
+          <span class="caption">By table</span>
+        </v-btn>
+        <v-btn small flat color="grey" @click="sortBy('accom')">
+          <v-icon left small>hotel</v-icon>
+          <span class="caption">By accomodation</span>
+        </v-btn>
+        <v-btn small flat color="grey" @click="sortBy('flight')">
+          <v-icon left small>airplanemode_active</v-icon>
+          <span class="caption">By flight</span>
+        </v-btn>
+        <v-btn small flat color="grey" @click="sortBy('rsvp')">
+          <v-icon left small>how_to_reg</v-icon>
+          <span class="caption">By rsvp</span>
+        </v-btn>
+      </v-layout>
+
       <v-card color="white" flat v-for="(guest, index) in guests" :key="guest.name">
         <v-layout row wrap :class="`pa-3 guest ${guest.rsvp}`">
           <v-flex xs12 md5>
@@ -48,14 +70,7 @@ export default {
   data() {
     return {
       items: ["unsent", "sent", "accepted", "declined"],
-      guests: [
-        // {
-        //   name: "Richard Khaw",
-        //   accommodation: false,
-        //   flight: false,
-        //   rsvp: "accepted"
-        // }
-      ]
+      guests: []
     };
   },
   methods: {
@@ -65,27 +80,33 @@ export default {
       db.collection("guests")
         .doc(guestUid)
         .update({ rsvp: this.guests[index].rsvp });
+    },
+    sortBy(prop) {
+      this.guests.sort((a, b) => (a[prop] < b[prop] ? -1 : 1));
+      this.$forceUpdate();
     }
   },
   created() {
-    db.collection("guests").onSnapshot(res => {
-      const changes = res.docChanges();
-      changes.forEach(change => {
-        const uid = change.doc.id;
-        if (change.type === "added") {
-          this.guests.push({ ...change.doc.data(), uid });
-        } else if (change.type === "modified") {
-          const index = this.guests.map(guest => guest.uid).indexOf(uid);
-          this.$set(this.guests, index, {
-            ...change.doc.data(),
-            uid
-          });
-        } else if (change.type === "removed") {
-          const index = this.guests.map(guest => guest.uid).indexOf(uid);
-          this.$delete(this.guests, index);
-        }
+    db.collection("guests")
+      .orderBy("name")
+      .onSnapshot(res => {
+        const changes = res.docChanges();
+        changes.forEach(change => {
+          const uid = change.doc.id;
+          if (change.type === "added") {
+            this.guests.push({ ...change.doc.data(), uid });
+          } else if (change.type === "modified") {
+            const index = this.guests.map(guest => guest.uid).indexOf(uid);
+            this.$set(this.guests, index, {
+              ...change.doc.data(),
+              uid
+            });
+          } else if (change.type === "removed") {
+            const index = this.guests.map(guest => guest.uid).indexOf(uid);
+            this.$delete(this.guests, index);
+          }
+        });
       });
-    });
   }
 };
 </script>

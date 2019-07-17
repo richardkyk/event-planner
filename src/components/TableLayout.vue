@@ -37,7 +37,7 @@
                 </v-flex>
                 <v-spacer></v-spacer>
                 <v-icon v-if="guest.flight">flight</v-icon>
-                <v-icon v-if="guest.accom">home</v-icon>
+                <v-icon v-if="guest.accom">hotel</v-icon>
               </v-layout>
             </v-list-tile>
           </template>
@@ -49,7 +49,7 @@
                 <v-icon @click="toggleIcon(guest.uid, 'flight', !guest.flight)">airplanemode_active</v-icon>
               </v-flex>
               <v-flex text-xs-center>
-                <v-icon @click="toggleIcon(guest.uid, 'accom', !guest.accom)">home</v-icon>
+                <v-icon @click="toggleIcon(guest.uid, 'accom', !guest.accom)">hotel</v-icon>
               </v-flex>
               <v-flex text-xs-center>
                 <v-icon @click.stop="openModal(guest.uid, guest.name)">edit</v-icon>

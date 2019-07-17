@@ -45,7 +45,7 @@ export default {
       drawer: false,
       links: [
         { icon: "dashboard", text: "Dashboard", route: "/" },
-        { icon: "person", text: "Guests", route: "/guests" },
+        { icon: "group", text: "Guests", route: "/guests" },
         { icon: "local_dining", text: "Tables", route: "/tables" }
       ]
     };
