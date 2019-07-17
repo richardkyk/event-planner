@@ -31,7 +31,7 @@
               :items="items"
               height="20"
               item-value="rsvp"
-              @input="changeRSVP(guest.uid)"
+              @change="changeRSVP(guest.uid)"
             ></v-select>
           </v-flex>
         </v-layout>
@@ -60,7 +60,11 @@ export default {
   },
   methods: {
     changeRSVP(guestUid) {
-      console.log(guestUid);
+      const index = this.guests.map(guest => guest.uid).indexOf(guestUid);
+
+      db.collection("guests")
+        .doc(guestUid)
+        .update({ rsvp: this.guests[index].rsvp });
     }
   },
   created() {
@@ -88,7 +92,7 @@ export default {
 
 <style>
 .guest.accepted {
-  border-left: 4px solid lightgreen;
+  border-left: 4px solid#79d279;
 }
 
 .guest.sent {
@@ -97,6 +101,10 @@ export default {
 
 .guest.declined {
   border-left: 4px solid tomato;
+}
+
+.guest.unsent {
+  border-left: 4px solid #3cd1c2;
 }
 .v-input__control .v-input__slot,
 .v-text-field.v-text-field--solo .v-input__control {
@@ -107,12 +115,19 @@ export default {
 }
 
 .guest.accepted .v-chip {
-  background: lightgreen;
+  background: #79d279;
+  color: white;
 }
 .guest.sent .v-chip {
   background: orange;
+  color: white;
 }
 .guest.declined .v-chip {
   background: tomato;
+  color: white;
+}
+.guest.unsent .v-chip {
+  background: #3cd1c2;
+  color: white;
 }
 </style>
