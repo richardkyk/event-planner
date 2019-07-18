@@ -46,7 +46,9 @@ export default {
       links: [
         { icon: "dashboard", text: "Dashboard", route: "/" },
         { icon: "group", text: "Guests", route: "/guests" },
-        { icon: "local_dining", text: "Tables", route: "/tables" }
+        { icon: "local_dining", text: "Tables", route: "/tables" },
+        { icon: "airplanemode_active", text: "Flights", route: "/flights" },
+        { icon: "hotel", text: "Accomodation", route: "/accommodation" }
       ]
     };
   }

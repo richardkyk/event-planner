@@ -35,7 +35,7 @@
             <div>{{guest.table}}</div>
           </v-flex>
           <v-flex xs6 sm4 md2>
-            <div class="caption grey--text">Accomodation</div>
+            <div class="caption grey--text">Accommodation</div>
             <div v-if="guest.accom">{{guest.accom}}</div>
           </v-flex>
           <v-flex xs6 sm4 md2>
