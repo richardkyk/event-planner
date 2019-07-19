@@ -6,6 +6,7 @@
           <v-btn @click="addFlight()" :loading="loading" small flat color="grey">
             <v-icon left small>add</v-icon>
             <span>Add Flight</span>
+            <FlightPopup ref="flightPopup" />
           </v-btn>
         </v-flex>
       </v-layout>
@@ -31,14 +32,15 @@
 
 <script>
 import FlightLayout from "@/components/FlightLayout";
-import db from "@/fb";
+import FlightPopup from "@/components/FlightPopup";
+// import db from "@/fb";
 import Vue from "vue";
 import UUID from "vue-uuid";
 
 Vue.use(UUID);
 
 export default {
-  components: { FlightLayout },
+  components: { FlightLayout, FlightPopup },
   data() {
     return {
       loading: false,
@@ -89,7 +91,7 @@ export default {
           uid: "03f7a2b5-f39b-4943-a927-0e4a821d8082",
           flightNum: "D7 218",
           time: "7:30 PM",
-          date: "18/07/2019",
+          date: "17th Jul 2019",
           arrival: true,
           guests: [
             "edb7a273-dafb-4f47-8ce3-a91e296eb65c",
@@ -103,7 +105,7 @@ export default {
           uid: "0457db8b-1d68-4ffd-b1e9-1d32b31cdfb0",
           flightNum: "D7 312",
           time: "9:30 AM",
-          date: "25/07/2019",
+          date: "12th Jul 2019",
           arrival: false,
           guests: ["edb7a273-dafb-4f47-8ce3-a91e296eb65c"]
         }
@@ -113,7 +115,8 @@ export default {
   methods: {
     addFlight() {
       console.log("adding flight");
-      this.sortFlights();
+      const data = { flightNum: "", time: "", date: "", guests: this.guests };
+      this.$refs.flightPopup.open(data);
     }
   },
   computed: {
