@@ -46,6 +46,7 @@
             <!-- So we can have Unsent, Sent, Accepted, Declined -->
             <div class="caption grey--text">RSVP</div>
             <v-select
+              class="rsvp"
               v-model="guest.rsvp"
               dense
               solo
@@ -113,10 +114,18 @@ export default {
 }
 .v-input__control .v-input__slot,
 .v-text-field.v-text-field--solo .v-input__control {
-  min-height: 20px !important;
+  /* height: 0px; */
+  min-height: 15px !important;
   padding-top: 3px !important;
   display: flex !important;
   align-items: center !important;
+}
+
+.rsvp {
+  height: 0px;
+}
+.rsvp .v-input__control .v-input__slot {
+  padding: 0 0px !important;
 }
 
 .guest.accepted .v-chip {
