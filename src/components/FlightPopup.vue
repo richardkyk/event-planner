@@ -30,7 +30,7 @@
                 label="Date"
                 prepend-icon="date_range"
               ></v-text-field>
-              <v-date-picker v-model="date"></v-date-picker>
+              <v-date-picker v-model="flightDate"></v-date-picker>
             </v-menu>
             <v-spacer></v-spacer>
 
@@ -39,17 +39,34 @@
               <v-text-field
                 readonly
                 :rules="dateRules"
-                :value="time"
+                :value="flightTime"
                 slot="activator"
                 label="Time"
                 prepend-icon="access_time"
               ></v-text-field>
-              <v-time-picker v-if="showClock" v-model="time"></v-time-picker>
+              <v-time-picker v-if="showClock" v-model="flightTime"></v-time-picker>
             </v-menu>
           </v-layout>
 
           <v-combobox
-            v-model="chips"
+            v-model="guests"
+            :items="allFlightGuests"
+            chips
+            multiple
+            item-text="name"
+            item-value="name"
+            label="Guests for this flight"
+            flat
+            prepend-icon="people"
+          >
+            <template v-slot:selection="data">
+              <v-chip small :selected="data.selected" close @input="remove(data.item)">
+                <strong>{{ data.item.name }}</strong>&nbsp;
+              </v-chip>
+            </template>>
+          </v-combobox>
+          <!-- <v-combobox
+            v-model="guests"
             :items="flightGuests"
             label="Guests for this flight"
             flat
@@ -61,14 +78,15 @@
           >
             <template v-slot:selection="data">
               <v-chip :selected="data.selected" close @input="remove(data.item)">
-                <strong>{{ data.item }}</strong>&nbsp;
-                <span>(interest)</span>
-              </v-chip>
+          <strong>{{ data.item.name }}</strong>&nbsp;-->
+          <!-- <template slot="item" slot-scope="data">{{ data.item.name }}</template> -->
+          <!-- </v-chip>
             </template>
-          </v-combobox>
+          </v-combobox>-->
 
           <v-layout row>
             <v-btn flat @click.stop="dialog = false">Close</v-btn>
+            <v-btn flat @click="deleteFlight" danger>Delete</v-btn>
             <v-spacer></v-spacer>
             <v-btn flat @click="submit">Submit</v-btn>
           </v-layout>
@@ -80,59 +98,93 @@
 
 <script>
 import moment from "moment";
+import { arrayUnion } from "vuex-easy-firestore";
 
 export default {
   data() {
     return {
       dialog: false,
       flightNum: "",
-      date: null,
-      time: null,
+      flightDate: null,
+      flightTime: null,
       guests: [],
       arrival: true,
-      uid: "",
       showClock: false,
       inputRules: [v => v.length >= 1 || "Please enter a flight number"],
-      dateRules: [v => v != null || "Please select a date/time"],
-      chips: []
+      dateRules: [v => v != null || "Please select a date/time"]
     };
   },
   methods: {
+    remove(item) {
+      this.guests.splice(this.guests.indexOf(item), 1);
+      this.guests = [...this.guests];
+      if (this.id) {
+        const newFlightId = item.flightId.filter(
+          flightId => flightId != this.id
+        );
+        this.$store.dispatch("guests/set", {
+          id: item.id,
+          flightId: newFlightId
+        });
+      }
+    },
     open(data) {
-      const { flightNum, arrival, date, time, uid, guests } = data;
+      const { flightNum, arrival, flightDate, flightTime, id, guests } = data;
       this.dialog = true;
       this.flightNum = flightNum;
       this.arrival = arrival;
-      this.date = date
-        ? moment(date, "Do MMM YYYY").format("YYYY-MM-DD")
+      this.flightDate = flightDate
+        ? moment(flightDate, "Do MMM YYYY").format("YYYY-MM-DD")
         : null;
-      this.time = time ? moment(time, "HH:mm A").format("HH:mm") : null;
-      this.uid = uid;
-      this.guests = guests;
+      this.flightTime = flightTime
+        ? moment(flightTime, "HH:mm A").format("HH:mm")
+        : null;
+      this.guests =
+        guests.length > 0
+          ? this.$store.getters["flights/flightGuests"](id)
+          : [];
+      this.id = id;
     },
     submit() {
       if (this.$refs.form.validate()) {
+        const guests = this.guests.map(guest => guest.id);
+        const flightId = this.id
+          ? this.id
+          : this.$store.getters["flights/dbRef"].doc().id;
         const data = {
+          id: flightId,
           flightNum: this.flightNum,
-          time: moment(this.time, "HH:mm").format("h:mm A"),
-          date: moment(this.date).format("Do MMM YYYY"),
+          flightTime: moment(this.flightTime, "HH:mm").format("h:mm A"),
+          flightDate: moment(this.flightDate).format("Do MMM YYYY"),
           arrival: this.arrival,
-          guests: this.guests
+          guests
         };
-        console.log(this.uid);
-        console.log(data);
+
+        this.$store.dispatch("flights/set", data);
+        guests.forEach(guestId => {
+          this.$store.dispatch("guests/set", {
+            id: guestId,
+            flightId: arrayUnion(flightId)
+          });
+        });
+
+        this.dialog = false;
       }
+    },
+    deleteFlight() {
+      this.$store.dispatch("flights/delete", this.id);
+      this.dialog = false;
     }
   },
   computed: {
     formattedDate() {
-      return this.date ? moment(this.date).format("Do MMM YYYY") : null;
+      return this.flightDate
+        ? moment(this.flightDate).format("Do MMM YYYY")
+        : null;
     },
-    guestNames() {},
-    flightGuests() {
-      const flightGuests = this.$store.getters["guests/flightGuests"];
-      console.log(flightGuests);
-      return flightGuests;
+    allFlightGuests() {
+      const allFlightGuests = this.$store.getters["guests/allFlightGuests"];
+      return allFlightGuests;
     }
   }
 };
@@ -141,5 +193,8 @@ export default {
 <style>
 .v-input__prepend-outer {
   margin-top: 15px;
+}
+.v-select.v-select--chips .v-select__selections {
+  min-height: 0px !important;
 }
 </style>

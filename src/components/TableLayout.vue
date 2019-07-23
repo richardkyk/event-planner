@@ -46,10 +46,10 @@
           <v-list-tile>
             <v-layout row>
               <v-flex text-xs-center>
-                <v-icon @click="toggleIcon(guest.id, 'flight', !guest.flight)">airplanemode_active</v-icon>
+                <v-icon @click="toggleIcon(guest, 'flight', !guest.flight)">airplanemode_active</v-icon>
               </v-flex>
               <v-flex text-xs-center>
-                <v-icon @click="toggleIcon(guest.id, 'accom', !guest.accom)">hotel</v-icon>
+                <v-icon @click="toggleIcon(guest, 'accom', !guest.accom)">hotel</v-icon>
               </v-flex>
               <v-flex text-xs-center>
                 <v-icon @click.stop="editTable(guest)">edit</v-icon>
@@ -122,12 +122,22 @@ export default {
       });
       this.$store.dispatch("guests/delete", id);
     },
-    toggleIcon(id, type, value) {
+    toggleIcon(guest, type, value) {
       const data = {
-        id,
+        id: guest.id,
         [type]: value
       };
       this.$store.dispatch("guests/patch", data);
+      if (type == "flight" && value == false) {
+        guest.flightId.forEach(id => {
+          let flightGuests = this.$store.state.flights.data[id].guests.filter(
+            guestId => guestId != guest.id
+          );
+          console.log(flightGuests);
+          this.$store.dispatch("flights/patch", { id, guests: flightGuests });
+        });
+        this.$store.dispatch("guests/patch", { id: guest.id, flightId: [] });
+      }
     }
   }
 };

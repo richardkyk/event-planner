@@ -36,7 +36,7 @@ const guests = {
       }
       return sortedGuests;
     },
-    flightGuests: (state, getters) => {
+    allFlightGuests: (state, getters) => {
       return Object.values(state.data).filter(guest => guest.flight == true);
     }
   },

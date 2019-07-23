@@ -8,7 +8,21 @@ const flights = {
   // this object is your store module (will be added as '/flights')
   // you can also add state/getters/mutations/actions
   state: {},
-  getters: {},
+  getters: {
+    arrivals: (state, getters) => {
+      return Object.values(state.data).filter(flight => flight.arrival == true);
+    },
+    departures: (state, getters) => {
+      return Object.values(state.data).filter(
+        flight => flight.arrival == false
+      );
+    },
+    flightGuests: (state, getters, rootState) => id => {
+      return state.data[id].guests.map(guest => {
+        return rootState.guests.data[guest];
+      });
+    }
+  },
   mutations: {},
   actions: {}
 };

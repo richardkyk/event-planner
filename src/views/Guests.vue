@@ -40,10 +40,11 @@
           </v-flex>
           <v-flex xs6 sm4 md2>
             <div class="caption grey--text">Flight</div>
-            <div v-if="guest.flight">{{guest.flight}}</div>
+            <div v-if="guest.flight" :class="`${flightStatus(guest)}`">{{flightStatus(guest)}}</div>
           </v-flex>
           <v-flex xs6 sm4 md1>
             <!-- So we can have Unsent, Sent, Accepted, Declined -->
+            <div class="caption grey--text">RSVP</div>
             <v-select
               v-model="guest.rsvp"
               dense
@@ -80,6 +81,9 @@ export default {
     }
   },
   methods: {
+    flightStatus(guest) {
+      return guest.flightId.length > 0 ? "assigned" : "unassigned";
+    },
     changeRSVP(guest) {
       const { id, rsvp } = guest;
       this.$store.dispatch("guests/patch", { id, rsvp });
@@ -110,7 +114,7 @@ export default {
 .v-input__control .v-input__slot,
 .v-text-field.v-text-field--solo .v-input__control {
   min-height: 20px !important;
-  padding-top: 10px !important;
+  padding-top: 3px !important;
   display: flex !important;
   align-items: center !important;
 }
@@ -130,5 +134,11 @@ export default {
 .guest.unsent .v-chip {
   background: #3cd1c2;
   color: white;
+}
+.unassigned {
+  color: orange;
+}
+.assigned {
+  color: #79d279;
 }
 </style>

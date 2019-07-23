@@ -14,15 +14,15 @@
         </v-flex>
       </v-layout>
       <v-layout row mb-3 mt-1>
-        <h1 class="font-weight-thin title">{{flight.date}}</h1>
+        <h1 class="font-weight-thin title">{{flight.flightDate}}</h1>
         <v-spacer></v-spacer>
-        <h1 class="font-weight-thin title">{{flight.time}}</h1>
+        <h1 class="font-weight-thin title">{{flight.flightTime}}</h1>
         <v-flex ml-2 xs1></v-flex>
       </v-layout>
 
       <v-divider></v-divider>
       <v-item-group class="mt-3">
-        <v-item v-for="guest in flight.sortedGuests" :key="guest.uid">
+        <v-item v-for="guest in flightGuests" :key="guest.id">
           <v-chip color="indigo" class="white--text" small>{{guest.name}}</v-chip>
         </v-item>
       </v-item-group>
@@ -43,6 +43,11 @@ export default {
   methods: {
     editFlight(flight) {
       this.$refs.flightPopup.open(flight);
+    }
+  },
+  computed: {
+    flightGuests() {
+      return this.$store.getters["flights/flightGuests"](this.flight.id);
     }
   }
 };
