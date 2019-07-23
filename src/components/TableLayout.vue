@@ -69,10 +69,6 @@
 
 <script>
 import EditTablePopup from "@/components/EditTablePopup";
-import Vue from "vue";
-import UUID from "vue-uuid";
-
-Vue.use(UUID);
 
 export default {
   components: { EditTablePopup },

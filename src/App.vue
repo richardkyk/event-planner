@@ -20,10 +20,9 @@ export default {
   },
   created() {
     // Listener for table changes
-    // this.loading = true;
     this.$store.dispatch("guests/openDBChannel").catch(console.error);
     this.$store.dispatch("tables/openDBChannel").catch(console.error);
-    // this.loading = false;
+    this.$store.dispatch("flights/openDBChannel").catch(console.error);
   }
 };
 </script>

@@ -48,28 +48,24 @@
             </v-menu>
           </v-layout>
 
-<v-combobox
-    v-model="chips"
-    :items="guests"
-    label="Guests for this flight"
-    flat
-    chips
-    clearable
-    prepend-icon="filter_list"
-    solo
-    multiple
-  >
-    <template v-slot:selection="data">
-      <v-chip
-        :selected="data.selected"
-        close
-        @input="remove(data.item)"
-      >
-        <strong>{{ data.item }}</strong>&nbsp;
-        <span>(interest)</span>
-      </v-chip>
-    </template>
-  </v-combobox>
+          <v-combobox
+            v-model="chips"
+            :items="flightGuests"
+            label="Guests for this flight"
+            flat
+            chips
+            clearable
+            prepend-icon="filter_list"
+            solo
+            multiple
+          >
+            <template v-slot:selection="data">
+              <v-chip :selected="data.selected" close @input="remove(data.item)">
+                <strong>{{ data.item }}</strong>&nbsp;
+                <span>(interest)</span>
+              </v-chip>
+            </template>
+          </v-combobox>
 
           <v-layout row>
             <v-btn flat @click.stop="dialog = false">Close</v-btn>
@@ -97,7 +93,8 @@ export default {
       uid: "",
       showClock: false,
       inputRules: [v => v.length >= 1 || "Please enter a flight number"],
-      dateRules: [v => v != null || "Please select a date/time"]
+      dateRules: [v => v != null || "Please select a date/time"],
+      chips: []
     };
   },
   methods: {
@@ -130,8 +127,12 @@ export default {
   computed: {
     formattedDate() {
       return this.date ? moment(this.date).format("Do MMM YYYY") : null;
-    }, guestNames() {
-      
+    },
+    guestNames() {},
+    flightGuests() {
+      const flightGuests = this.$store.getters["guests/flightGuests"];
+      console.log(flightGuests);
+      return flightGuests;
     }
   }
 };

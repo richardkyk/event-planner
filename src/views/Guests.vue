@@ -6,7 +6,7 @@
           <v-icon left small>person</v-icon>
           <span class="caption">By name</span>
         </v-btn>
-        <v-btn small flat color="grey" @click="sortBy('table')">
+        <v-btn small flat color="grey" @click="sortBy('tableNum')">
           <v-icon left small>local_dining</v-icon>
           <span class="caption">By table</span>
         </v-btn>
@@ -24,7 +24,7 @@
         </v-btn>
       </v-layout>
 
-      <v-card color="white" flat v-for="(guest, index) in guests" :key="guest.name">
+      <v-card color="white" flat v-for="guest in sortedGuests" :key="guest.id">
         <v-layout row wrap :class="`pa-3 guest ${guest.rsvp}`">
           <v-flex xs12 md5>
             <div class="caption grey--text">Name</div>
@@ -32,7 +32,7 @@
           </v-flex>
           <v-flex xs6 sm4 md2>
             <div class="caption grey--text">Table</div>
-            <div>{{guest.table}}</div>
+            <div>{{guest.tableNum}}</div>
           </v-flex>
           <v-flex xs6 sm4 md2>
             <div class="caption grey--text">Accommodation</div>
@@ -45,7 +45,7 @@
           <v-flex xs6 sm4 md1>
             <!-- So we can have Unsent, Sent, Accepted, Declined -->
             <v-select
-              v-model="guests[index].rsvp"
+              v-model="guest.rsvp"
               dense
               solo
               small-chips
@@ -53,7 +53,7 @@
               :items="items"
               height="20"
               item-value="rsvp"
-              @change="changeRSVP(guest.uid)"
+              @change="changeRSVP(guest)"
             ></v-select>
           </v-flex>
         </v-layout>
@@ -64,64 +64,29 @@
 </template>
 
 <script>
-// import db from "@/fb";
-
 export default {
   data() {
     return {
       items: ["unsent", "sent", "accepted", "declined"],
-      guests: []
+      prop: "name"
     };
   },
-  methods: {
-    changeRSVP(guestUid) {
-      const index = this.guests.map(guest => guest.uid).indexOf(guestUid);
-
-      db.collection("guests")
-        .doc(guestUid)
-        .update({ rsvp: this.guests[index].rsvp });
+  computed: {
+    allGuests() {
+      return this.$store.getters["guests/allGuests"];
     },
-    sortBy(prop) {
-      const sortOrders = {
-        flight: { true: 1, false: 2 },
-        rsvp: { unsent: 1, sent: 2, accepted: 3, declined: 4 },
-        accom: { true: 1, false: 2 }
-      };
-      switch (prop) {
-        case "flight":
-        case "accom":
-        case "rsvp":
-          this.guests.sort((a, b) => {
-            return sortOrders[prop][a[prop]] - sortOrders[prop][b[prop]];
-          });
-          break;
-        default:
-          this.guests.sort((a, b) => (a[prop] < b[prop] ? -1 : 1));
-          break;
-      }
+    sortedGuests() {
+      return this.$store.getters["guests/sortedGuests"](this.prop);
     }
   },
-  created() {
-    db.collection("guests")
-      .orderBy("name")
-      .onSnapshot(res => {
-        const changes = res.docChanges();
-        changes.forEach(change => {
-          const uid = change.doc.id;
-          if (change.type === "added") {
-            this.guests.push({ ...change.doc.data(), uid });
-          } else if (change.type === "modified") {
-            const index = this.guests.map(guest => guest.uid).indexOf(uid);
-            this.$set(this.guests, index, {
-              ...change.doc.data(),
-              uid
-            });
-          } else if (change.type === "removed") {
-            const index = this.guests.map(guest => guest.uid).indexOf(uid);
-            this.$delete(this.guests, index);
-          }
-        });
-      });
+  methods: {
+    changeRSVP(guest) {
+      const { id, rsvp } = guest;
+      this.$store.dispatch("guests/patch", { id, rsvp });
+    },
+    sortBy(prop) {
+      this.prop = prop;
+    }
   }
 };
 </script>

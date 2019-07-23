@@ -157,9 +157,6 @@ export default {
           return { ...flight };
         });
       return sortedDepartures;
-    },
-    unassignedGuests() {
-      return this.guests;
     }
   }
 };

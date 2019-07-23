@@ -3,7 +3,7 @@
     <v-container class="my-5">
       <v-layout row ml-2>
         <v-flex xs12 sm6 md4 lg3>
-          <v-btn @click="addTable()" :loading="loading" small flat color="grey">
+          <v-btn @click="addTable()" small flat color="grey">
             <v-icon left small>add</v-icon>
             <span>Add Table</span>
           </v-btn>
@@ -26,7 +26,6 @@ export default {
   data() {
     return {
       tables: [],
-      loading: false,
       guests: {}
     };
   },

@@ -8,9 +8,10 @@ import { Firebase, initFirebase } from "@/firebase.js";
 // import from step 3 (below)
 import guests from "./modules/guests";
 import tables from "./modules/tables";
+import flights from "./modules/flights";
 
 // do the magic 🧙🏻‍♂️
-const easyFirestore = VuexEasyFirestore([guests, tables], {
+const easyFirestore = VuexEasyFirestore([guests, tables, flights], {
   logging: true,
   FirebaseDependency: Firebase
 });

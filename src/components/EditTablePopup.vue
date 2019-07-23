@@ -15,8 +15,6 @@
 </template>
 
 <script>
-// import db from "@/fb";
-
 export default {
   data() {
     return { dialog: false, value: "", type: null, data: null };
