@@ -22,7 +22,7 @@
 
       <v-divider></v-divider>
       <v-item-group class="mt-3">
-        <v-item v-for="guest in flight.guests" :key="guest.uid">
+        <v-item v-for="guest in flight.sortedGuests" :key="guest.uid">
           <v-chip color="indigo" class="white--text" small>{{guest.name}}</v-chip>
         </v-item>
       </v-item-group>

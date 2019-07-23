@@ -104,7 +104,7 @@ export default {
         {
           uid: "0457db8b-1d68-4ffd-b1e9-1d32b31cdfb0",
           flightNum: "D7 312",
-          time: "9:30 AM",
+          time: "12:30 AM",
           date: "12th Jul 2019",
           arrival: false,
           guests: ["edb7a273-dafb-4f47-8ce3-a91e296eb65c"]
@@ -114,8 +114,14 @@ export default {
   },
   methods: {
     addFlight() {
-      console.log("adding flight");
-      const data = { flightNum: "", time: "", date: "", guests: this.guests };
+      const data = {
+        flightNum: "",
+        time: null,
+        date: null,
+        guests: this.guests,
+        arrival: true,
+        uid: ""
+      };
       this.$refs.flightPopup.open(data);
     }
   },
@@ -131,7 +137,7 @@ export default {
           const sortedGuests = flight.guests.map(uid => {
             return { ...sortedFlights[uid] };
           });
-          flight.guests = sortedGuests;
+          flight.sortedGuests = sortedGuests;
           return { ...flight };
         });
       return sortedArrivals;
@@ -147,10 +153,13 @@ export default {
           const sortedGuests = flight.guests.map(uid => {
             return { ...sortedFlights[uid] };
           });
-          flight.guests = sortedGuests;
+          flight.sortedGuests = sortedGuests;
           return { ...flight };
         });
       return sortedDepartures;
+    },
+    unassignedGuests() {
+      return this.guests;
     }
   }
 };

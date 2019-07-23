@@ -3,11 +3,11 @@
     <v-card flat class="mx-3 mb-3">
       <!-- This is the tool bar -->
       <v-toolbar color="indigo">
-        <span class="white--text font-weight-thin display-2">{{table.id}}</span>
+        <span class="white--text font-weight-thin display-2">{{table.tableNum}}</span>
         <v-toolbar-title class="text-xs white--text font-weight-thin">{{table.desc}}</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn icon>
-          <v-icon @click.stop="openTableModal(table.desc)" color="white">edit</v-icon>
+          <v-icon @click.stop="editTable(table)" color="white">edit</v-icon>
         </v-btn>
       </v-toolbar>
 
@@ -25,7 +25,7 @@
 
       <!-- The expansion panel for the guests -->
       <v-list>
-        <v-list-group v-for="(guest, index) in table.orderedGuests" :key="index" no-action>
+        <v-list-group v-for="(guest, index) in tableGuests" :key="index" no-action>
           <template v-slot:activator>
             <v-list-tile>
               <v-layout row>
@@ -46,137 +46,92 @@
           <v-list-tile>
             <v-layout row>
               <v-flex text-xs-center>
-                <v-icon @click="toggleIcon(guest.uid, 'flight', !guest.flight)">airplanemode_active</v-icon>
+                <v-icon @click="toggleIcon(guest.id, 'flight', !guest.flight)">airplanemode_active</v-icon>
               </v-flex>
               <v-flex text-xs-center>
-                <v-icon @click="toggleIcon(guest.uid, 'accom', !guest.accom)">hotel</v-icon>
+                <v-icon @click="toggleIcon(guest.id, 'accom', !guest.accom)">hotel</v-icon>
               </v-flex>
               <v-flex text-xs-center>
-                <v-icon @click.stop="openModal(guest.uid, guest.name)">edit</v-icon>
+                <v-icon @click.stop="editTable(guest)">edit</v-icon>
               </v-flex>
               <v-flex text-xs-center>
-                <v-icon @click="removeGuest(guest.uid)">delete</v-icon>
+                <v-icon @click="removeGuest(guest.id)">delete</v-icon>
               </v-flex>
             </v-layout>
           </v-list-tile>
         </v-list-group>
 
-        <!-- This is the popup dialog for editing the table description -->
-        <v-dialog persistent v-model="tableModal" max-width="300px">
-          <v-card>
-            <v-text-field
-              class="mx-3"
-              ref="tableText"
-              v-model="tableModalDesc"
-              v-on:keyup.enter="editTableDesc"
-            ></v-text-field>
-            <v-layout row justify-space-between>
-              <v-card-actions>
-                <v-btn flat color="primary" @click.stop="tableModal = false">Close</v-btn>
-              </v-card-actions>
-              <v-card-actions>
-                <v-btn flat color="primary" @click.stop="editTableDesc()">Submit</v-btn>
-              </v-card-actions>
-            </v-layout>
-          </v-card>
-        </v-dialog>
-
-        <!-- This is the popup dialog for editing the guests -->
-        <v-dialog persistent v-model="guestModal" max-width="300px">
-          <v-card>
-            <v-text-field
-              class="mx-3"
-              ref="guestText"
-              v-model="guestModalName"
-              v-on:keyup.enter="editGuest"
-            ></v-text-field>
-            <v-layout row justify-space-between>
-              <v-card-actions>
-                <v-btn flat color="primary" @click.stop="guestModal = false">Close</v-btn>
-              </v-card-actions>
-              <v-card-actions>
-                <v-btn flat color="primary" @click.stop="editGuest()">Submit</v-btn>
-              </v-card-actions>
-            </v-layout>
-          </v-card>
-        </v-dialog>
+        <EditTablePopup ref="tablePopup" />
       </v-list>
     </v-card>
   </div>
 </template>
 
 <script>
+import EditTablePopup from "@/components/EditTablePopup";
+import Vue from "vue";
+import UUID from "vue-uuid";
+
+Vue.use(UUID);
+
 export default {
+  components: { EditTablePopup },
   props: ["table"],
   data() {
     return {
-      name: "",
-      tableModal: false,
-      tableModalDesc: "",
-      guestModal: false,
-      guestModalName: "",
-      guestModalUid: null
+      name: ""
     };
   },
+  computed: {
+    tableGuests() {
+      return this.$store.getters["tables/tableGuests"](this.table.id);
+    }
+  },
   methods: {
+    editTable(data) {
+      this.$refs.tablePopup.open(data);
+    },
     addGuest() {
-      const data = {
-        tableId: this.table.id,
-        tableUid: this.table.uid,
-        name: this.name
+      const id = this.$store.getters["guests/dbRef"].doc().id;
+      const tableId = this.table.id;
+      const guestData = {
+        id,
+        tableNum: this.table.tableNum,
+        tableId,
+        name: this.name,
+        flight: false,
+        accom: false,
+        rsvp: "unsent",
+        flightId: []
       };
-      const payload = { type: "addGuest", data };
-      this.$emit("updateTable", payload);
+      this.$store.dispatch("guests/set", guestData);
+
+      const tableGuests = this.$store.state.tables.data[tableId].guests;
+      tableGuests.push(id);
+
+      this.$store.dispatch("tables/patch", {
+        id: tableId,
+        guests: tableGuests
+      });
       this.name = "";
     },
-    removeGuest(guestUid) {
+    removeGuest(id) {
+      const tableId = this.table.id;
+      const tableGuests = this.$store.state.tables.data[tableId].guests.filter(
+        guest => guest != id
+      );
+      this.$store.dispatch("tables/patch", {
+        id: tableId,
+        guests: tableGuests
+      });
+      this.$store.dispatch("guests/delete", id);
+    },
+    toggleIcon(id, type, value) {
       const data = {
-        tableUid: this.table.uid,
-        tableId: this.table.id,
-        guestUid
+        id,
+        [type]: value
       };
-      const payload = { type: "removeGuest", data };
-      this.$emit("updateTable", payload);
-    },
-    openModal(guestUid, name) {
-      this.guestModalUid = guestUid;
-      this.guestModalName = name;
-      this.guestModal = true;
-      this.$nextTick(this.$refs.guestText.focus);
-    },
-    openTableModal(desc) {
-      this.tableModalDesc = desc;
-      this.tableModal = true;
-      this.$nextTick(this.$refs.tableText.focus);
-    },
-    editTableDesc() {
-      const data = {
-        desc: this.tableModalDesc,
-        uid: this.table.uid
-      };
-      const payload = { type: "editTableDesc", data };
-      this.$emit("updateTable", payload);
-      this.tableModal = false;
-    },
-    editGuest() {
-      const data = {
-        guestUid: this.guestModalUid,
-        propName: "name",
-        value: this.guestModalName
-      };
-      const payload = { type: "editGuest", data };
-      this.$emit("updateTable", payload);
-      this.guestModal = false;
-    },
-    toggleIcon(guestUid, type, value) {
-      const data = {
-        guestUid,
-        propName: type,
-        value
-      };
-      // console.log(data);
-      const payload = { type: "editGuest", data };
-      this.$emit("updateTable", payload);
+      this.$store.dispatch("guests/patch", data);
     }
   }
 };
