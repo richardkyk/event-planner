@@ -163,7 +163,7 @@ export default {
           suburb: this.suburb,
           postCode: this.postCode,
           guests,
-          checkInDate: moment(this.checkInDate).format("Do MMM YYYYY"),
+          checkInDate: moment(this.checkInDate).format("Do MMM YYYY"),
           checkOutDate: moment(this.checkOutDate).format("Do MMM YYYY")
         };
 
