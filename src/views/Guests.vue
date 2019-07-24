@@ -36,7 +36,7 @@
           </v-flex>
           <v-flex xs6 sm4 md2>
             <div class="caption grey--text">Accommodation</div>
-            <div v-if="guest.accom">{{guest.accom}}</div>
+            <div v-if="guest.accom" :class="`${accomStatus(guest)}`">{{accomStatus(guest)}}</div>
           </v-flex>
           <v-flex xs6 sm4 md2>
             <div class="caption grey--text">Flight</div>
@@ -84,6 +84,9 @@ export default {
   methods: {
     flightStatus(guest) {
       return guest.flightId.length > 0 ? "assigned" : "unassigned";
+    },
+    accomStatus(guest) {
+      return guest.accomId.length > 0 ? "assigned" : "unassigned";
     },
     changeRSVP(guest) {
       const { id, rsvp } = guest;

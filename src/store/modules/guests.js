@@ -38,6 +38,9 @@ const guests = {
     },
     allFlightGuests: (state, getters) => {
       return Object.values(state.data).filter(guest => guest.flight == true);
+    },
+    allAccomGuests: (state, getters) => {
+      return Object.values(state.data).filter(guest => guest.accom == true);
     }
   },
   mutations: {},

@@ -9,12 +9,16 @@ import { Firebase, initFirebase } from "@/firebase.js";
 import guests from "./modules/guests";
 import tables from "./modules/tables";
 import flights from "./modules/flights";
+import accommodations from "./modules/accommodations";
 
 // do the magic 🧙🏻‍♂️
-const easyFirestore = VuexEasyFirestore([guests, tables, flights], {
-  logging: true,
-  FirebaseDependency: Firebase
-});
+const easyFirestore = VuexEasyFirestore(
+  [guests, tables, flights, accommodations],
+  {
+    logging: true,
+    FirebaseDependency: Firebase
+  }
+);
 
 // include as PLUGIN in your vuex store
 // please note that "myModule" should ONLY be passed via the plugin

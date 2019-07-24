@@ -65,28 +65,10 @@
               </v-chip>
             </template>>
           </v-combobox>
-          <!-- <v-combobox
-            v-model="guests"
-            :items="flightGuests"
-            label="Guests for this flight"
-            flat
-            chips
-            clearable
-            prepend-icon="filter_list"
-            solo
-            multiple
-          >
-            <template v-slot:selection="data">
-              <v-chip :selected="data.selected" close @input="remove(data.item)">
-          <strong>{{ data.item.name }}</strong>&nbsp;-->
-          <!-- <template slot="item" slot-scope="data">{{ data.item.name }}</template> -->
-          <!-- </v-chip>
-            </template>
-          </v-combobox>-->
 
           <v-layout row>
             <v-btn flat @click.stop="dialog = false">Close</v-btn>
-            <v-btn flat @click="deleteFlight" danger>Delete</v-btn>
+            <v-btn flat @click="deleteFlight">Delete</v-btn>
             <v-spacer></v-spacer>
             <v-btn flat @click="submit">Submit</v-btn>
           </v-layout>
@@ -98,7 +80,7 @@
 
 <script>
 import moment from "moment";
-import { arrayUnion } from "vuex-easy-firestore";
+import { arrayUnion, arrayRemove } from "vuex-easy-firestore";
 
 export default {
   data() {
@@ -107,9 +89,10 @@ export default {
       flightNum: "",
       flightDate: null,
       flightTime: null,
-      guests: [],
       arrival: true,
       showClock: false,
+      initialGuests: [],
+      guests: [],
       inputRules: [v => v.length >= 1 || "Please enter a flight number"],
       dateRules: [v => v != null || "Please select a date/time"]
     };
@@ -118,15 +101,6 @@ export default {
     remove(item) {
       this.guests.splice(this.guests.indexOf(item), 1);
       this.guests = [...this.guests];
-      if (this.id) {
-        const newFlightId = item.flightId.filter(
-          flightId => flightId != this.id
-        );
-        this.$store.dispatch("guests/set", {
-          id: item.id,
-          flightId: newFlightId
-        });
-      }
     },
     open(data) {
       const { flightNum, arrival, flightDate, flightTime, id, guests } = data;
@@ -143,11 +117,23 @@ export default {
         guests.length > 0
           ? this.$store.getters["flights/flightGuests"](id)
           : [];
+      this.initialGuests = guests;
       this.id = id;
     },
     submit() {
       if (this.$refs.form.validate()) {
         const guests = this.guests.map(guest => guest.id);
+        const removedGuests = this.initialGuests.filter(
+          guestId => !guests.includes(guestId)
+        );
+
+        removedGuests.forEach(guest => {
+          this.$store.dispatch("guests/patch", {
+            id: guest,
+            flightId: arrayRemove(this.id)
+          });
+        });
+
         const flightId = this.id
           ? this.id
           : this.$store.getters["flights/dbRef"].doc().id;
@@ -156,6 +142,10 @@ export default {
           flightNum: this.flightNum,
           flightTime: moment(this.flightTime, "HH:mm").format("h:mm A"),
           flightDate: moment(this.flightDate).format("Do MMM YYYY"),
+          flightTimestamp: moment(
+            this.flightDate + " " + this.flightTime,
+            "YYYY/MM/DD HH:mm"
+          ).unix(),
           arrival: this.arrival,
           guests
         };
@@ -172,6 +162,12 @@ export default {
       }
     },
     deleteFlight() {
+      this.initialGuests.forEach(guestId => {
+        this.$store.dispatch("guests/patch", {
+          id: guestId,
+          flightId: arrayRemove(this.id)
+        });
+      });
       this.$store.dispatch("flights/delete", this.id);
       this.dialog = false;
     }
@@ -183,8 +179,7 @@ export default {
         : null;
     },
     allFlightGuests() {
-      const allFlightGuests = this.$store.getters["guests/allFlightGuests"];
-      return allFlightGuests;
+      return this.$store.getters["guests/allFlightGuests"];
     }
   }
 };
@@ -192,7 +187,7 @@ export default {
 
 <style>
 .v-input__prepend-outer {
-  margin-top: 15px;
+  margin-top: 10px;
 }
 .v-select.v-select--chips .v-select__selections {
   min-height: 0px !important;

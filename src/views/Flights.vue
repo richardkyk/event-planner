@@ -12,16 +12,14 @@
       </v-layout>
 
       <!-- Arrival cards -->
-      <!-- <h1 class="display-2 grey--text font-weight-light">Arrivals</h1> -->
-      <v-layout row>
+      <v-layout row wrap>
         <v-flex xs12 sm6 md4 lg3 v-for="flight in arrivals" :key="flight.uid">
           <FlightLayout v-bind:flight="flight" />
         </v-flex>
       </v-layout>
 
       <!-- Departure cards -->
-      <!-- <h1 class="display-2 grey--text font-weight-light">Departures</h1> -->
-      <v-layout row>
+      <v-layout row wrap>
         <v-flex xs12 sm6 md4 lg3 v-for="flight in departures" :key="flight.uid">
           <FlightLayout v-bind:flight="flight" />
         </v-flex>

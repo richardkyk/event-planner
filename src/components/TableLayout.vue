@@ -61,17 +61,18 @@
           </v-list-tile>
         </v-list-group>
 
-        <EditTablePopup ref="tablePopup" />
+        <TablePopup ref="tablePopup" />
       </v-list>
     </v-card>
   </div>
 </template>
 
 <script>
-import EditTablePopup from "@/components/EditTablePopup";
+import TablePopup from "@/components/TablePopup";
+import { arrayUnion, arrayRemove } from "vuex-easy-firestore";
 
 export default {
-  components: { EditTablePopup },
+  components: { TablePopup },
   props: ["table"],
   data() {
     return {
@@ -98,27 +99,21 @@ export default {
         flight: false,
         accom: false,
         rsvp: "unsent",
-        flightId: []
+        flightId: [],
+        accomId: []
       };
       this.$store.dispatch("guests/set", guestData);
-
-      const tableGuests = this.$store.state.tables.data[tableId].guests;
-      tableGuests.push(id);
-
       this.$store.dispatch("tables/patch", {
         id: tableId,
-        guests: tableGuests
+        guests: arrayUnion(id)
       });
       this.name = "";
     },
     removeGuest(id) {
       const tableId = this.table.id;
-      const tableGuests = this.$store.state.tables.data[tableId].guests.filter(
-        guest => guest != id
-      );
       this.$store.dispatch("tables/patch", {
         id: tableId,
-        guests: tableGuests
+        guests: arrayRemove(id)
       });
       this.$store.dispatch("guests/delete", id);
     },
@@ -130,13 +125,25 @@ export default {
       this.$store.dispatch("guests/patch", data);
       if (type == "flight" && value == false) {
         guest.flightId.forEach(id => {
-          let flightGuests = this.$store.state.flights.data[id].guests.filter(
-            guestId => guestId != guest.id
-          );
-          console.log(flightGuests);
-          this.$store.dispatch("flights/patch", { id, guests: flightGuests });
+          this.$store.dispatch("flights/patch", {
+            id,
+            guests: arrayRemove(guest.id)
+          });
         });
         this.$store.dispatch("guests/patch", { id: guest.id, flightId: [] });
+      }
+
+      if (type == "accom" && value == false) {
+        guest.accomId.forEach(id => {
+          this.$store.dispatch("accommodations/patch", {
+            id,
+            guests: arrayRemove(guest.id)
+          });
+        });
+        this.$store.dispatch("guests/patch", {
+          id: guest.id,
+          accomId: []
+        });
       }
     }
   }

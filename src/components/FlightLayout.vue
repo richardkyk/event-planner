@@ -14,9 +14,9 @@
         </v-flex>
       </v-layout>
       <v-layout row mb-3 mt-1>
-        <h1 class="font-weight-thin title">{{flight.flightDate}}</h1>
+        <h1 class="font-weight-light title">{{flight.flightDate}}</h1>
         <v-spacer></v-spacer>
-        <h1 class="font-weight-thin title">{{flight.flightTime}}</h1>
+        <h1 class="font-weight-light title">{{flight.flightTime}}</h1>
         <v-flex ml-2 xs1></v-flex>
       </v-layout>
 
