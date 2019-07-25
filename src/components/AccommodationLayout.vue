@@ -41,10 +41,18 @@
             streetViewControl: false,
             rotateControl: false,
             fullscreenControl: true,
-            disableDefaultUi: false
+            disableDefaultUi: false,
+            disabledAutoPan: true
           }"
         >
-          <GmapMarker :position="accom.coords" :clickable="true" @click="center=accom.coords" />
+          <!-- <GmapMarker :position="accom.coords" :clickable="true" @click="center=accom.coords" /> -->
+          <GmapMarker
+            v-for="(m, index) in markers"
+            :key="index"
+            :position="m"
+            :clickable="true"
+            @click="center=m"
+          ></GmapMarker>
         </GmapMap>
       </v-flex>
 
@@ -72,6 +80,9 @@ export default {
   computed: {
     accomGuests() {
       return this.$store.getters["accommodations/accomGuests"](this.accom.id);
+    },
+    markers() {
+      return this.$store.getters["accommodations/markers"];
     }
   }
 };
