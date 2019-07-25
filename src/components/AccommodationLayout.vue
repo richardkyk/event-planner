@@ -23,15 +23,30 @@
       </v-layout>
 
       <v-layout row mb-3 mt-1>
-        <v-spacer></v-spacer>
-        <span class="font-weight-light subtitle">{{accom.address}}</span>
+        <span
+          class="font-weight-light subtitle"
+        >{{accom.address}}, {{accom.suburb}}, {{accom.postCode}}</span>
         <v-flex ml-2 xs1></v-flex>
       </v-layout>
-      <v-layout row mb-3 mt-1>
-        <v-spacer></v-spacer>
-        <span class="font-weight-light subtitle">{{accom.suburb}} {{accom.postCode}}</span>
-        <v-flex ml-2 xs1></v-flex>
-      </v-layout>
+      <v-flex mb-4>
+        <GmapMap
+          :center="accom.coords"
+          :zoom="15"
+          map-type-id="terrain"
+          style="width: auto; height: 200px"
+          :options="{
+            zoomControl: true,
+            mapTypeControl: false,
+            scaleControl: false,
+            streetViewControl: false,
+            rotateControl: false,
+            fullscreenControl: true,
+            disableDefaultUi: false
+          }"
+        >
+          <GmapMarker :position="accom.coords" :clickable="true" @click="center=accom.coords" />
+        </GmapMap>
+      </v-flex>
 
       <v-divider></v-divider>
       <v-item-group class="mt-3">

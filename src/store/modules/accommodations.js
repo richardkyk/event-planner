@@ -10,16 +10,15 @@ const accommodations = {
   state: {},
   getters: {
     accommodations: (state, getters) => {
-      return state.data;
+      return Object.values(state.data).sort(
+        (a, b) => a.checkInTimestamp - b.checkInTimestamp
+      );
     },
     accomGuests: (state, getters, rootState) => id => {
       return state.data[id].guests.map(guest => {
         return rootState.guests.data[guest];
       });
     }
-    //   sortedAccommodations: (state, getters) => {
-    //     return Object.values(state.data).sort((a, b) => a.tableNum - b.tableNum);
-    //   }
   },
   mutations: {},
   actions: {}

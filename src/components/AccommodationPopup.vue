@@ -139,7 +139,7 @@ export default {
       this.initialGuests = data.guests;
       this.dialog = true;
     },
-    submit() {
+    async submit() {
       if (this.$refs.form.validate()) {
         const guests = this.guests.map(guest => guest.id);
         const removedGuests = this.initialGuests.filter(
@@ -153,6 +153,16 @@ export default {
           });
         });
 
+        let coords = {};
+        try {
+          coords = await this.getCoords(
+            `${this.address} ${this.suburb} ${this.postCode}`
+          );
+        } catch (error) {
+          // console.log(error);
+          coords = {};
+        }
+
         const accomId = this.id
           ? this.id
           : this.$store.getters["accommodations/dbRef"].doc().id;
@@ -163,8 +173,10 @@ export default {
           suburb: this.suburb,
           postCode: this.postCode,
           guests,
+          coords,
           checkInDate: moment(this.checkInDate).format("Do MMM YYYY"),
-          checkOutDate: moment(this.checkOutDate).format("Do MMM YYYY")
+          checkOutDate: moment(this.checkOutDate).format("Do MMM YYYY"),
+          checkInTimestamp: moment(this.checkInDate).unix()
         };
 
         this.$store.dispatch("accommodations/set", data);
@@ -178,6 +190,23 @@ export default {
         this.dialog = false;
       }
     },
+    async getCoords(address) {
+      const geocoder = new google.maps.Geocoder();
+      return new Promise((resolve, reject) => {
+        geocoder.geocode({ address }, (results, status) => {
+          const coords = {};
+          if (status == google.maps.GeocoderStatus.OK) {
+            const lat = results[0].geometry.location.lat();
+            const lng = results[0].geometry.location.lng();
+            (coords.lat = lat), (coords.lng = lng);
+            resolve(coords);
+          } else {
+            reject(new Error("Couldn't find the location " + address));
+          }
+        });
+      });
+    },
+
     deleteAccom() {
       console.log("deleted");
     },
