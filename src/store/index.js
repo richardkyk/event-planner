@@ -10,10 +10,11 @@ import guests from "./modules/guests";
 import tables from "./modules/tables";
 import flights from "./modules/flights";
 import accommodations from "./modules/accommodations";
+import dietary from "./modules/dietary";
 
 // do the magic 🧙🏻‍♂️
 const easyFirestore = VuexEasyFirestore(
-  [guests, tables, flights, accommodations],
+  [guests, tables, flights, accommodations, dietary],
   {
     logging: true,
     FirebaseDependency: Firebase

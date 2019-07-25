@@ -48,7 +48,8 @@ export default {
         { icon: "group", text: "Guests", route: "/guests" },
         { icon: "local_dining", text: "Tables", route: "/tables" },
         { icon: "airplanemode_active", text: "Flights", route: "/flights" },
-        { icon: "hotel", text: "Accomodation", route: "/accommodation" }
+        { icon: "hotel", text: "Accomodation", route: "/accommodation" },
+        { icon: "restaurant", text: "Dietary Options", route: "/dietary" },
       ]
     };
   }

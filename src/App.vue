@@ -24,6 +24,7 @@ export default {
     this.$store.dispatch("tables/openDBChannel").catch(console.error);
     this.$store.dispatch("flights/openDBChannel").catch(console.error);
     this.$store.dispatch("accommodations/openDBChannel").catch(console.error);
+    this.$store.dispatch("dietary/openDBChannel").catch(console.error);
   }
 };
 </script>

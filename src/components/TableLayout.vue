@@ -24,7 +24,7 @@
       </v-layout>
 
       <!-- The expansion panel for the guests -->
-      <v-list>
+      <v-list two-line>
         <v-list-group v-for="(guest, index) in tableGuests" :key="index" no-action>
           <template v-slot:activator>
             <v-list-tile>
@@ -34,6 +34,7 @@
                 </v-flex>
                 <v-flex>
                   <v-list-tile-title>{{ guest.name }}</v-list-tile-title>
+                  <v-list-tile-sub-title>{{guest.dietary}}</v-list-tile-sub-title>
                 </v-flex>
                 <v-spacer></v-spacer>
                 <v-icon v-if="guest.flight">flight</v-icon>
@@ -45,15 +46,39 @@
           <!-- The icons for flight, accomodation, edit and delete -->
           <v-list-tile>
             <v-layout row>
+              <!-- Toggle flight -->
               <v-flex text-xs-center>
                 <v-icon @click="toggleIcon(guest, 'flight', !guest.flight)">airplanemode_active</v-icon>
               </v-flex>
+              <!-- Toggle accommodation -->
               <v-flex text-xs-center>
                 <v-icon @click="toggleIcon(guest, 'accom', !guest.accom)">hotel</v-icon>
               </v-flex>
+
+              <!-- Dietary options -->
+              <v-flex text-xs-center>
+                <v-menu>
+                  <v-icon slot="activator">restaurant</v-icon>
+
+                  <v-list v-if="dietary.length > 0">
+                    <v-list-tile
+                      v-for="(item, i) in dietary"
+                      :key="i"
+                      @click="selectDietary(guest, item)"
+                    >
+                      <v-list-tile-title>{{ item }}</v-list-tile-title>
+                    </v-list-tile>
+                  </v-list>
+                  <v-list v-else>
+                    <v-list-tile>Please add some dietary options</v-list-tile>
+                  </v-list>
+                </v-menu>
+              </v-flex>
+              <!-- Edit guest name -->
               <v-flex text-xs-center>
                 <v-icon @click.stop="editTable(guest)">edit</v-icon>
               </v-flex>
+              <!-- Delete guest -->
               <v-flex text-xs-center>
                 <v-icon @click="removeGuest(guest.id)">delete</v-icon>
               </v-flex>
@@ -82,6 +107,9 @@ export default {
   computed: {
     tableGuests() {
       return this.$store.getters["tables/tableGuests"](this.table.id);
+    },
+    dietary() {
+      return this.$store.getters["dietary/options"].options;
     }
   },
   methods: {
@@ -145,15 +173,17 @@ export default {
           accomId: []
         });
       }
+    },
+    selectDietary(guest, item) {
+      this.$store.dispatch("guests/patch", { id: guest.id, dietary: item });
     }
   }
 };
 </script>
 
 <style>
-.v-list__tile {
-  height: 32px;
-  padding-right: 0px;
+.v-list--two-line .v-list__tile {
+  height: 50px;
 }
 .v-messages {
   min-height: 0px;

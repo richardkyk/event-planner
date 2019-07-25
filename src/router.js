@@ -5,6 +5,7 @@ import Guests from "./views/Guests.vue";
 import Tables from "./views/Tables.vue";
 import Flights from "./views/Flights.vue";
 import Accommodation from "./views/Accommodation.vue";
+import Dietary from "./views/Dietary.vue";
 
 Vue.use(Router);
 
@@ -24,6 +25,7 @@ export default new Router({
     },
     { path: "/tables", name: "tables", component: Tables },
     { path: "/flights", name: "flights", component: Flights },
-    { path: "/accommodation", name: "accommodation", component: Accommodation }
+    { path: "/accommodation", name: "accommodation", component: Accommodation },
+    { path: "/dietary", name: "dietary", component: Dietary }
   ]
 });

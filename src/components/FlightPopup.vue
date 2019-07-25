@@ -68,7 +68,7 @@
 
           <v-layout row>
             <v-btn flat @click.stop="dialog = false">Close</v-btn>
-            <v-btn flat @click="deleteFlight">Delete</v-btn>
+            <v-btn flat @click="deleteFlight" v-if="id">Delete</v-btn>
             <v-spacer></v-spacer>
             <v-btn flat @click="submit">Submit</v-btn>
           </v-layout>
@@ -86,6 +86,7 @@ export default {
   data() {
     return {
       dialog: false,
+      id: null,
       flightNum: "",
       flightDate: null,
       flightTime: null,

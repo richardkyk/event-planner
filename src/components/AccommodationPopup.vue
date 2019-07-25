@@ -89,7 +89,7 @@
 
           <v-layout row>
             <v-btn flat @click.stop="dialog = false">Close</v-btn>
-            <v-btn flat @click="deleteAccom">Delete</v-btn>
+            <v-btn flat @click="deleteAccom" v-if="id">Delete</v-btn>
             <v-spacer></v-spacer>
             <v-btn flat @click="submit">Submit</v-btn>
           </v-layout>
@@ -107,6 +107,7 @@ export default {
   data() {
     return {
       dialog: false,
+      id: null,
       desc: "",
       address: "",
       suburb: "",
@@ -208,7 +209,14 @@ export default {
     },
 
     deleteAccom() {
-      console.log("deleted");
+      this.initialGuests.forEach(guestId => {
+        this.$store.dispatch("guests/patch", {
+          id: guestId,
+          accomId: arrayRemove(this.id)
+        });
+      });
+      this.$store.dispatch("accommodations/delete", this.id);
+      this.dialog = false;
     },
     formattedDate(date) {
       return date ? moment(date, "YYYY-MM-DD").format("Do MMM YYYY") : null;
