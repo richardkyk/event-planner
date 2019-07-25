@@ -77,7 +77,7 @@ export default {
   computed: {
     dietary() {
       const dietary = this.$store.getters["dietary/options"];
-      this.id = dietary.id;
+      this.id = dietary.id ? dietary.id : null;
       return dietary.options ? dietary.options : [];
     }
   },

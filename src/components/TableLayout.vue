@@ -128,7 +128,8 @@ export default {
         accom: false,
         rsvp: "unsent",
         flightId: [],
-        accomId: []
+        accomId: [],
+        dietary: ""
       };
       this.$store.dispatch("guests/set", guestData);
       this.$store.dispatch("tables/patch", {

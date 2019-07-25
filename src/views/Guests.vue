@@ -10,6 +10,10 @@
           <v-icon left small>local_dining</v-icon>
           <span class="caption">By table</span>
         </v-btn>
+        <v-btn small flat color="grey" @click="sortBy('dietary')">
+          <v-icon left small>restaurant</v-icon>
+          <span class="caption">By meal</span>
+        </v-btn>
         <v-btn small flat color="grey" @click="sortBy('accom')">
           <v-icon left small>hotel</v-icon>
           <span class="caption">By accomodation</span>
@@ -26,13 +30,17 @@
 
       <v-card color="white" flat v-for="guest in sortedGuests" :key="guest.id">
         <v-layout row wrap :class="`pa-3 guest ${guest.rsvp}`">
-          <v-flex xs12 md5>
+          <v-flex xs12 md3>
             <div class="caption grey--text">Name</div>
             <div>{{guest.name}}</div>
           </v-flex>
           <v-flex xs6 sm4 md2>
             <div class="caption grey--text">Table</div>
             <div>{{guest.tableNum}}</div>
+          </v-flex>
+          <v-flex xs6 sm4 md2>
+            <div class="caption grey--text">Meal</div>
+            <div>{{guest.dietary}}</div>
           </v-flex>
           <v-flex xs6 sm4 md2>
             <div class="caption grey--text">Accommodation</div>
