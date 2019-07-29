@@ -100,15 +100,12 @@ export default {
         : [];
       const data = [];
       guests.forEach(guest => {
-        guest.accom = guest.accom ? this.accomStatus(guest) : "";
-        guest.flight = guest.flight ? this.flightStatus(guest) : "";
-
         data.push({
           Name: guest.name,
           TableNumber: guest.tableNum,
           DietarySelection: guest.dietary,
-          AccomStatus: guest.accom,
-          FlightStatus: guest.flight,
+          AccomStatus: guest.accom ? this.accomStatus(guest) : "",
+          FlightStatus: guest.flight ? this.flightStatus(guest) : "",
           RSVP: guest.rsvp
         });
       });
