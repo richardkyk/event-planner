@@ -89,9 +89,9 @@
 
           <v-layout row>
             <v-btn flat @click.stop="dialog = false">Close</v-btn>
-            <v-btn flat @click="deleteAccom" v-if="id">Delete</v-btn>
+            <v-btn color="error" flat @click="deleteAccom" v-if="id">Delete</v-btn>
             <v-spacer></v-spacer>
-            <v-btn flat @click="submit">Submit</v-btn>
+            <v-btn color="primary" flat @click="submit">Submit</v-btn>
           </v-layout>
         </v-form>
       </v-card-text>

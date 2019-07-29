@@ -10,9 +10,9 @@ const guests = {
   state: {},
   getters: {
     allGuests: state => {
-      return state.data;
+      return Object.values(state.data);
     },
-    sortedGuests: (state, getters) => prop => {
+    sortedGuests: state => prop => {
       const sortOrders = {
         flight: { true: 1, false: 2 },
         rsvp: { unsent: 1, sent: 2, accepted: 3, declined: 4 },
@@ -36,10 +36,10 @@ const guests = {
       }
       return sortedGuests;
     },
-    allFlightGuests: (state, getters) => {
+    allFlightGuests: state => {
       return Object.values(state.data).filter(guest => guest.flight == true);
     },
-    allAccomGuests: (state, getters) => {
+    allAccomGuests: state => {
       return Object.values(state.data).filter(guest => guest.accom == true);
     }
   },

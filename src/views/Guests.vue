@@ -12,7 +12,7 @@
         </v-btn>
         <v-btn small flat color="grey" @click="sortBy('dietary')">
           <v-icon left small>restaurant</v-icon>
-          <span class="caption">By meal</span>
+          <span class="caption">Dietary Selection</span>
         </v-btn>
         <v-btn small flat color="grey" @click="sortBy('accom')">
           <v-icon left small>hotel</v-icon>
@@ -39,7 +39,7 @@
             <div>{{guest.tableNum}}</div>
           </v-flex>
           <v-flex xs6 sm4 md2>
-            <div class="caption grey--text">Meal</div>
+            <div class="caption grey--text">Dietary Selection</div>
             <div>{{guest.dietary}}</div>
           </v-flex>
           <v-flex xs6 sm4 md2>
@@ -82,9 +82,6 @@ export default {
     };
   },
   computed: {
-    allGuests() {
-      return this.$store.getters["guests/allGuests"];
-    },
     sortedGuests() {
       return this.$store.getters["guests/sortedGuests"](this.prop);
     }

@@ -64,6 +64,7 @@
                     <v-list-tile
                       v-for="(item, i) in dietary"
                       :key="i"
+                      :v-model="guest.dietary"
                       @click="selectDietary(guest, item)"
                     >
                       <v-list-tile-title>{{ item }}</v-list-tile-title>
@@ -109,7 +110,9 @@ export default {
       return this.$store.getters["tables/tableGuests"](this.table.id);
     },
     dietary() {
-      return this.$store.getters["dietary/options"].options;
+      return this.$store.getters["dietary/options"].options
+        ? this.$store.getters["dietary/options"].options
+        : [];
     }
   },
   methods: {

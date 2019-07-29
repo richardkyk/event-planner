@@ -3,7 +3,7 @@
     <v-container class="my-5">
       <v-layout row ml-3>
         <v-flex xs12 sm6 md4 lg3>
-          <v-btn @click="addInitial()" v-if="dietary.length === 0" small flat color="grey">
+          <v-btn @click="addInitial()" v-if="dietary().length === 0" small flat color="grey">
             <v-icon left small>add</v-icon>
             <span>Add Dietary Options</span>
           </v-btn>
@@ -11,9 +11,10 @@
       </v-layout>
       <v-layout row ml-2>
         <v-flex xs12 sm6 md4 lg3>
-          <v-card flat class="mx-3 mb-3" v-if="dietary.length > 0">
+          <v-card flat class="mx-3 mb-3" v-if="dietary().length > 0">
             <!-- This is the tool bar -->
             <v-toolbar color="indigo">
+              <v-icon color="white">restaurants</v-icon>
               <v-toolbar-title class="text-xs white--text font-weight-thin">Dietary Options</v-toolbar-title>
               <v-spacer></v-spacer>
             </v-toolbar>
@@ -32,7 +33,7 @@
 
             <!-- The expansion panel for the guests -->
             <v-list>
-              <v-list-group v-for="(diet, index) in dietary" :key="index" no-action>
+              <v-list-group v-for="(diet, index) in dietary()" :key="index" no-action>
                 <template v-slot:activator>
                   <v-list-tile>
                     <v-layout row>
@@ -73,14 +74,6 @@ export default {
       diet: ""
     };
   },
-
-  computed: {
-    dietary() {
-      const dietary = this.$store.getters["dietary/options"];
-      this.id = dietary.id ? dietary.id : null;
-      return dietary.options ? dietary.options : [];
-    }
-  },
   methods: {
     addInitial() {
       this.$store.dispatch("dietary/set", {
@@ -99,6 +92,11 @@ export default {
         id: this.id,
         options: arrayRemove(diet)
       });
+    },
+    dietary() {
+      const dietary = this.$store.getters["dietary/options"];
+      this.id = dietary.id ? dietary.id : null;
+      return dietary.options ? dietary.options : [];
     }
   }
 };
