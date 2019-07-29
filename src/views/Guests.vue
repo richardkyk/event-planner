@@ -26,6 +26,12 @@
           <v-icon left small>how_to_reg</v-icon>
           <span class="caption">By rsvp</span>
         </v-btn>
+        <v-spacer></v-spacer>
+
+        <v-btn small flat color="grey" @click="download">
+          <v-icon left small>cloud_download</v-icon>
+          <span class="caption">Export Data</span>
+        </v-btn>
       </v-layout>
 
       <v-card color="white" flat v-for="guest in sortedGuests" :key="guest.id">
@@ -74,6 +80,9 @@
 </template>
 
 <script>
+import XLSX from "xlsx";
+import moment from "moment";
+
 export default {
   data() {
     return {
@@ -84,14 +93,38 @@ export default {
   computed: {
     sortedGuests() {
       return this.$store.getters["guests/sortedGuests"](this.prop);
+    },
+    exportData() {
+      const guests = this.$store.getters["guests/allGuests"]
+        ? this.$store.getters["guests/allGuests"]
+        : [];
+      guests.forEach(guest => {
+        delete guest.accomId;
+        delete guest.flightId;
+        delete guest.id;
+        delete guest.tableId;
+        delete guest.created_at;
+        delete guest.created_by;
+        delete guest.updated_at;
+        delete guest.updated_by;
+      });
+      return guests;
     }
   },
   methods: {
     flightStatus(guest) {
-      return guest.flightId.length > 0 ? "assigned" : "unassigned";
+      return guest
+        ? guest.flightId.length > 0
+          ? "assigned"
+          : "unassigned"
+        : null;
     },
     accomStatus(guest) {
-      return guest.accomId.length > 0 ? "assigned" : "unassigned";
+      return guest
+        ? guest.accomId.length > 0
+          ? "assigned"
+          : "unassigned"
+        : null;
     },
     changeRSVP(guest) {
       const { id, rsvp } = guest;
@@ -99,6 +132,16 @@ export default {
     },
     sortBy(prop) {
       this.prop = prop;
+    },
+    download() {
+      const guestWS = XLSX.utils.json_to_sheet(this.exportData);
+      const wb = XLSX.utils.book_new();
+
+      XLSX.utils.book_append_sheet(wb, guestWS);
+
+      const date = moment().format("DD-MM-YYYY HH:mm");
+      const name = `guests ${date}.xls`;
+      XLSX.writeFile(wb, name);
     }
   }
 };

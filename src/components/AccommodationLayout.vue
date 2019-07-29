@@ -6,7 +6,7 @@
 
         <v-spacer></v-spacer>
         <!-- Description -->
-        <h1 class="ml-3 font-weight-medium indigo--text text-truncate">{{accom.desc}}</h1>
+        <h1 class="ml-3 font-weight-light indigo--text text-truncate">{{accom.desc}}</h1>
         <v-flex ml-2 xs1>
           <v-btn block icon @click="editAccom(accom)">
             <v-icon color="#3f51b5 ">edit</v-icon>

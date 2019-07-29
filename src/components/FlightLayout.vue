@@ -7,7 +7,7 @@
 
         <v-spacer></v-spacer>
         <!-- Description -->
-        <h1 class="font-weight-medium indigo--text text-truncate ml-3">{{flight.flightNum}}</h1>
+        <h1 class="font-weight-light indigo--text text-truncate ml-3">{{flight.flightNum}}</h1>
         <v-flex ml-2 xs1>
           <v-btn block icon @click="editFlight(flight)">
             <v-icon color="#3f51b5 ">edit</v-icon>
