@@ -81,7 +81,7 @@
               </v-flex>
               <!-- Delete guest -->
               <v-flex text-xs-center>
-                <v-icon @click="removeGuest(guest.id)">delete</v-icon>
+                <v-icon @click="removeGuest(guest)">delete</v-icon>
               </v-flex>
             </v-layout>
           </v-list-tile>
@@ -141,13 +141,32 @@ export default {
       });
       this.name = "";
     },
-    removeGuest(id) {
+    removeGuest(guest) {
       const tableId = this.table.id;
       this.$store.dispatch("tables/patch", {
         id: tableId,
-        guests: arrayRemove(id)
+        guests: arrayRemove(guest.id)
       });
-      this.$store.dispatch("guests/delete", id);
+
+      if (guest.accomId) {
+        guest.accomId.forEach(accomId =>
+          this.$store.dispatch("accommodations/patch", {
+            id: accomId,
+            guests: arrayRemove(guest.id)
+          })
+        );
+      }
+
+      if (guest.flightId) {
+        guest.flightId.forEach(flightId =>
+          this.$store.dispatch("flights/patch", {
+            id: flightId,
+            guests: arrayRemove(guest.id)
+          })
+        );
+      }
+
+      this.$store.dispatch("guests/delete", guest.id);
     },
     toggleIcon(guest, type, value) {
       const data = {
