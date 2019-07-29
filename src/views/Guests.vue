@@ -98,33 +98,29 @@ export default {
       const guests = this.$store.getters["guests/allGuests"]
         ? this.$store.getters["guests/allGuests"]
         : [];
+      const data = [];
       guests.forEach(guest => {
-        delete guest.accomId;
-        delete guest.flightId;
-        delete guest.id;
-        delete guest.tableId;
-        delete guest.created_at;
-        delete guest.created_by;
-        delete guest.updated_at;
-        delete guest.updated_by;
+        guest.accom = guest.accom ? this.accomStatus(guest) : "";
+        guest.flight = guest.flight ? this.flightStatus(guest) : "";
+
+        data.push({
+          Name: guest.name,
+          TableNumber: guest.tableNum,
+          DietarySelection: guest.dietary,
+          AccomStatus: guest.accom,
+          FlightStatus: guest.flight,
+          RSVP: guest.rsvp
+        });
       });
-      return guests;
+      return data;
     }
   },
   methods: {
     flightStatus(guest) {
-      return guest
-        ? guest.flightId.length > 0
-          ? "assigned"
-          : "unassigned"
-        : null;
+      return guest.flightId.length > 0 ? "assigned" : "unassigned";
     },
     accomStatus(guest) {
-      return guest
-        ? guest.accomId.length > 0
-          ? "assigned"
-          : "unassigned"
-        : null;
+      return guest.accomId.length > 0 ? "assigned" : "unassigned";
     },
     changeRSVP(guest) {
       const { id, rsvp } = guest;
