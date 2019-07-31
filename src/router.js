@@ -27,8 +27,6 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-  console.log(`Auth status: ${store.getters["authState"]}`);
-
   if (store.getters["authState"] && to.name === "login") {
     next("/");
   }

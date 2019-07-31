@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { Firebase } from "@/firebase";
+import { Firebase } from "@/firebase/";
 
 export default {
   data() {
@@ -56,12 +56,10 @@ export default {
   },
   methods: {
     login() {
-      console.log(this.email, this.password);
       this.loading = true;
       Firebase.auth()
         .signInWithEmailAndPassword(this.email, this.password)
-        .then(user => {
-          console.log(user);
+        .then(() => {
           this.$router.push("/");
         })
         .catch(err => {

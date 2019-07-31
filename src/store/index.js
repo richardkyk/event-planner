@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import VuexEasyFirestore from "vuex-easy-firestore";
-import { Firebase, initFirebase } from "@/firebase.js";
+import { Firebase, initFirebase } from "@/firebase";
 import guests from "./modules/guests";
 import tables from "./modules/tables";
 import flights from "./modules/flights";

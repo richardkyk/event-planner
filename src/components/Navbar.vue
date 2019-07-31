@@ -39,7 +39,7 @@
 
 
 <script>
-import firebase from "firebase";
+import { Firebase } from "@/firebase";
 
 export default {
   data() {
@@ -59,8 +59,7 @@ export default {
     signOut() {
       localStorage.removeItem("token");
       this.$store.dispatch("setAuth", false);
-      firebase
-        .auth()
+      Firebase.auth()
         .signOut()
         .then(() => {
           this.$router.push("/login");
