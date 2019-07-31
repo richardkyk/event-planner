@@ -4,6 +4,9 @@ const guests = {
   moduleName: "guests",
   statePropName: "data",
   namespaced: true, // automatically added
+  sync: {
+    where: [["created_by", "==", "{userId}"]]
+  },
 
   // this object is your store module (will be added as '/guests')
   // you can also add state/getters/mutations/actions

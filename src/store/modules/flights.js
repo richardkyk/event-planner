@@ -4,17 +4,20 @@ const flights = {
   moduleName: "flights",
   statePropName: "data",
   namespaced: true, // automatically added
+  sync: {
+    where: [["created_by", "==", "{userId}"]]
+  },
 
   // this object is your store module (will be added as '/flights')
   // you can also add state/getters/mutations/actions
   state: {},
   getters: {
-    arrivals: (state, getters) => {
+    arrivals: state => {
       return Object.values(state.data)
         .filter(flight => flight.arrival == true)
         .sort((a, b) => a.flightTimestamp - b.flightTimestamp);
     },
-    departures: (state, getters) => {
+    departures: state => {
       return Object.values(state.data)
         .filter(flight => flight.arrival == false)
         .sort((a, b) => a.flightTimestamp - b.flightTimestamp);

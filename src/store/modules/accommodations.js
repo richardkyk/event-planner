@@ -4,6 +4,9 @@ const accommodations = {
   moduleName: "accommodations",
   statePropName: "data",
   namespaced: true, // automatically added
+  sync: {
+    where: [["created_by", "==", "{userId}"]]
+  },
 
   // this object is your store module (will be added as '/accommodations')
   // you can also add state/getters/mutations/actions

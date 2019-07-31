@@ -1,6 +1,6 @@
 <template>
   <v-app class="grey lighten-4">
-    <Navbar />
+    <Navbar v-if="$route.name !== 'login'" />
     <v-content class="mx-4 mb-4">
       <router-view></router-view>
     </v-content>
@@ -12,19 +12,6 @@ import Navbar from "@/components/Navbar";
 
 export default {
   name: "App",
-  components: { Navbar },
-  data() {
-    return {
-      //
-    };
-  },
-  created() {
-    // Listener for table changes
-    this.$store.dispatch("guests/openDBChannel").catch(console.error);
-    this.$store.dispatch("tables/openDBChannel").catch(console.error);
-    this.$store.dispatch("flights/openDBChannel").catch(console.error);
-    this.$store.dispatch("accommodations/openDBChannel").catch(console.error);
-    this.$store.dispatch("dietary/openDBChannel").catch(console.error);
-  }
+  components: { Navbar }
 };
 </script>

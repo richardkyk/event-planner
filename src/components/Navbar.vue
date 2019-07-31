@@ -7,7 +7,7 @@
         <span>App</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn flat color="grey">
+      <v-btn @click="signOut" flat color="grey">
         <span>Sign Out</span>
         <v-icon right>exit_to_app</v-icon>
       </v-btn>
@@ -39,6 +39,8 @@
 
 
 <script>
+import firebase from "firebase";
+
 export default {
   data() {
     return {
@@ -49,9 +51,24 @@ export default {
         { icon: "local_dining", text: "Tables", route: "/tables" },
         { icon: "airplanemode_active", text: "Flights", route: "/flights" },
         { icon: "hotel", text: "Accomodation", route: "/accommodation" },
-        { icon: "restaurant", text: "Dietary Options", route: "/dietary" },
+        { icon: "restaurant", text: "Dietary Options", route: "/dietary" }
       ]
     };
+  },
+  methods: {
+    signOut() {
+      localStorage.removeItem("token");
+      this.$store.dispatch("setAuth", false);
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          this.$router.push("/login");
+        })
+        .catch(() => {
+          this.$router.push("/login");
+        });
+    }
   }
 };
 </script>

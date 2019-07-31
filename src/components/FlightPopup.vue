@@ -55,22 +55,23 @@
             multiple
             item-text="name"
             item-value="name"
-            label="Guests for this flight"
+            label="Passengers"
             flat
             prepend-icon="people"
+            hide-selected
           >
             <template v-slot:selection="data">
               <v-chip small :selected="data.selected" close @input="remove(data.item)">
                 <strong>{{ data.item.name }}</strong>&nbsp;
               </v-chip>
-            </template>>
+            </template>
           </v-combobox>
 
           <v-layout row>
-            <v-btn flat @click.stop="dialog = false">Close</v-btn>
-            <v-btn color="error" flat @click="deleteFlight" v-if="id">Delete</v-btn>
+            <v-btn class="text-none" flat @click.stop="dialog = false">Close</v-btn>
+            <v-btn class="text-none" color="error" flat @click="deleteFlight" v-if="id">Delete</v-btn>
             <v-spacer></v-spacer>
-            <v-btn color="primary" flat @click="submit">Submit</v-btn>
+            <v-btn class="text-none" color="primary" flat @click="submit">Submit</v-btn>
           </v-layout>
         </v-form>
       </v-card-text>
@@ -123,7 +124,9 @@ export default {
     },
     submit() {
       if (this.$refs.form.validate()) {
-        const guests = this.guests.map(guest => guest.id);
+        const guests = this.guests
+          .map(guest => guest.id)
+          .filter(guest => guest !== undefined);
         const removedGuests = this.initialGuests.filter(
           guestId => !guests.includes(guestId)
         );

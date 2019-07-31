@@ -4,6 +4,9 @@ const tables = {
   moduleName: "tables",
   statePropName: "data",
   namespaced: true, // automatically added
+  sync: {
+    where: [["created_by", "==", "{userId}"]]
+  },
 
   // this object is your store module (will be added as '/tables')
   // you can also add state/getters/mutations/actions
@@ -14,7 +17,7 @@ const tables = {
         return rootState.guests.data[guest];
       });
     },
-    sortedTables: (state, getters) => {
+    sortedTables: state => {
       return Object.values(state.data).sort((a, b) => a.tableNum - b.tableNum);
     }
   },
