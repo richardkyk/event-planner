@@ -59,7 +59,43 @@
           <v-flex xs6 sm4 md1>
             <!-- So we can have Unsent, Sent, Accepted, Declined -->
             <div class="caption grey--text">RSVP</div>
-            <v-select
+
+            <v-menu>
+              <!-- <v-icon slot="activator">restaurant</v-icon> -->
+
+              <v-chip slot="activator" small>
+                {{guest.rsvp}}
+                <v-icon pr-3>arrow_drop_down</v-icon>
+              </v-chip>
+              <v-list>
+                <v-list-tile
+                  v-for="(item, i) in items"
+                  :key="i"
+                  :v-model="guest.rsvp"
+                  @click="changeRSVP(guest, item)"
+                >
+                  <v-list-tile-title>{{ item }}</v-list-tile-title>
+                </v-list-tile>
+              </v-list>
+            </v-menu>
+
+            <!-- <v-combobox
+              class="rsvp"
+              v-model="guest.rsvp"
+              :items="items"
+              item-text="name"
+              item-value="name"
+              flat
+              hide-selected
+              solo
+              small-chips
+            >
+              <template v-slot:selection="data">
+                <v-chip small :selected="data.selected">{{ data.item }}&nbsp;</v-chip>
+              </template>
+            </v-combobox>-->
+
+            <!-- <v-select
               class="rsvp"
               v-model="guest.rsvp"
               dense
@@ -70,7 +106,7 @@
               height="20"
               item-value="rsvp"
               @change="changeRSVP(guest)"
-            ></v-select>
+            ></v-select>-->
           </v-flex>
         </v-layout>
         <v-divider></v-divider>
@@ -119,9 +155,8 @@ export default {
     accomStatus(guest) {
       return guest.accomId.length > 0 ? "assigned" : "unassigned";
     },
-    changeRSVP(guest) {
-      const { id, rsvp } = guest;
-      this.$store.dispatch("guests/patch", { id, rsvp });
+    changeRSVP(guest, item) {
+      this.$store.dispatch("guests/patch", { id: guest.id, rsvp: item });
     },
     sortBy(prop) {
       this.prop = prop;
@@ -160,7 +195,7 @@ export default {
 .v-text-field.v-text-field--solo .v-input__control {
   /* height: 0px; */
   min-height: 15px !important;
-  padding-top: 3px !important;
+  /* padding-top: 3px !important; */
   display: flex !important;
   align-items: center !important;
 }
@@ -170,6 +205,7 @@ export default {
 }
 .rsvp .v-input__control .v-input__slot {
   padding: 0 0px !important;
+  cursor: pointer;
 }
 
 .guest.accepted .v-chip {
