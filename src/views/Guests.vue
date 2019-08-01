@@ -36,7 +36,7 @@
 
       <v-card color="white" flat v-for="guest in sortedGuests" :key="guest.id">
         <v-layout row wrap :class="`pa-3 guest ${guest.rsvp}`">
-          <v-flex xs6 sm4 md2>
+          <v-flex xs6 sm4 md3>
             <div class="caption grey--text">Name</div>
             <div>{{guest.name}}</div>
           </v-flex>
@@ -56,7 +56,7 @@
             <div class="caption grey--text">Flight</div>
             <div v-if="guest.flight" :class="`${flightStatus(guest)}`">{{flightStatus(guest)}}</div>
           </v-flex>
-          <v-flex xs6 sm4 md2>
+          <v-flex xs6 sm4 md1>
             <!-- So we can have Unsent, Sent, Accepted, Declined -->
             <div class="caption grey--text">RSVP</div>
 
