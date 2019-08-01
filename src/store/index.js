@@ -13,7 +13,7 @@ Vue.use(Vuex);
 const easyFirestore = VuexEasyFirestore(
   [guests, tables, flights, accommodations, dietary],
   {
-    logging: true,
+    logging: false,
     FirebaseDependency: Firebase
   }
 );

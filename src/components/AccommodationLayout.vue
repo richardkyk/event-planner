@@ -15,14 +15,16 @@
       </v-layout>
 
       <!-- Dates for check-in/checkout -->
-      <v-layout row align-center>
-        <span class="font-weight-light title">{{accom.checkInDate}}</span>
-        <v-spacer></v-spacer>
-        <v-icon size="35">arrow_right</v-icon>
-        <v-spacer></v-spacer>
-        <span class="font-weight-light title">{{accom.checkOutDate}}</span>
+      <v-layout row align-center justify-space-between>
+        <v-flex class="font-weight-light title">{{accom.checkInDate}}</v-flex>
+        <!-- <v-spacer></v-spacer> -->
+        <v-flex>
+          <v-icon size="35">arrow_right</v-icon>
+        </v-flex>
+        <!-- <v-spacer></v-spacer> -->
+        <v-flex class="font-weight-light title">{{accom.checkOutDate}}</v-flex>
 
-        <v-flex ml-2 xs1></v-flex>
+        <!-- <v-flex ml-2 xs1></v-flex> -->
       </v-layout>
 
       <!-- Address -->

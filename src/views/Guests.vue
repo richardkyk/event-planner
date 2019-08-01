@@ -36,7 +36,7 @@
 
       <v-card color="white" flat v-for="guest in sortedGuests" :key="guest.id">
         <v-layout row wrap :class="`pa-3 guest ${guest.rsvp}`">
-          <v-flex xs12 md3>
+          <v-flex xs6 sm4 md2>
             <div class="caption grey--text">Name</div>
             <div>{{guest.name}}</div>
           </v-flex>
@@ -56,13 +56,11 @@
             <div class="caption grey--text">Flight</div>
             <div v-if="guest.flight" :class="`${flightStatus(guest)}`">{{flightStatus(guest)}}</div>
           </v-flex>
-          <v-flex xs6 sm4 md1>
+          <v-flex xs6 sm4 md2>
             <!-- So we can have Unsent, Sent, Accepted, Declined -->
             <div class="caption grey--text">RSVP</div>
 
             <v-menu>
-              <!-- <v-icon slot="activator">restaurant</v-icon> -->
-
               <v-chip slot="activator" small>
                 {{guest.rsvp}}
                 <v-icon pr-3>arrow_drop_down</v-icon>
@@ -78,35 +76,6 @@
                 </v-list-tile>
               </v-list>
             </v-menu>
-
-            <!-- <v-combobox
-              class="rsvp"
-              v-model="guest.rsvp"
-              :items="items"
-              item-text="name"
-              item-value="name"
-              flat
-              hide-selected
-              solo
-              small-chips
-            >
-              <template v-slot:selection="data">
-                <v-chip small :selected="data.selected">{{ data.item }}&nbsp;</v-chip>
-              </template>
-            </v-combobox>-->
-
-            <!-- <v-select
-              class="rsvp"
-              v-model="guest.rsvp"
-              dense
-              solo
-              small-chips
-              flat
-              :items="items"
-              height="20"
-              item-value="rsvp"
-              @change="changeRSVP(guest)"
-            ></v-select>-->
           </v-flex>
         </v-layout>
         <v-divider></v-divider>

@@ -11,7 +11,6 @@
         </v-flex>
       </v-layout>
 
-      <!-- Arrival cards -->
       <v-layout row wrap>
         <v-flex xs12 sm6 md4 lg3 v-for="accom in accommodations" :key="accom.id">
           <AccommodationLayout v-bind:accom="accom" />
