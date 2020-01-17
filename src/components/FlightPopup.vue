@@ -13,8 +13,16 @@
             <v-spacer></v-spacer>
             <v-flex xs3>
               <v-radio-group row v-model="arrival">
-                <v-radio color="primary" label="Arrival" :value="true"></v-radio>
-                <v-radio color="primary" label="Departure" :value="false"></v-radio>
+                <v-radio
+                  color="primary"
+                  label="Arrival"
+                  :value="true"
+                ></v-radio>
+                <v-radio
+                  color="primary"
+                  label="Departure"
+                  :value="false"
+                ></v-radio>
               </v-radio-group>
             </v-flex>
           </v-layout>
@@ -44,7 +52,10 @@
                 label="Time"
                 prepend-icon="access_time"
               ></v-text-field>
-              <v-time-picker v-if="showClock" v-model="flightTime"></v-time-picker>
+              <v-time-picker
+                v-if="showClock"
+                v-model="flightTime"
+              ></v-time-picker>
             </v-menu>
           </v-layout>
 
@@ -61,17 +72,34 @@
             hide-selected
           >
             <template v-slot:selection="data">
-              <v-chip small :selected="data.selected" close @input="remove(data.item)">
-                <strong>{{ data.item.name }}</strong>&nbsp;
+              <v-chip
+                small
+                :selected="data.selected"
+                close
+                @input="remove(data.item)"
+              >
+                <strong>{{ data.item.name }}</strong
+                >&nbsp;
               </v-chip>
             </template>
           </v-combobox>
 
-          <v-layout row>
-            <v-btn class="text-none" flat @click.stop="dialog = false">Close</v-btn>
-            <v-btn class="text-none" color="error" flat @click="deleteFlight" v-if="id">Delete</v-btn>
+          <v-layout class="pt-3 px-0" row>
+            <v-btn
+              flat
+              class="text-none"
+              color="error"
+              @click="deleteFlight"
+              v-if="id"
+              >Delete</v-btn
+            >
             <v-spacer></v-spacer>
-            <v-btn class="text-none" color="primary" flat @click="submit">Submit</v-btn>
+            <v-btn class="text-none" flat @click.stop="dialog = false"
+              >Close</v-btn
+            >
+            <v-btn class="text-none" flat color="primary" @click="submit"
+              >Submit</v-btn
+            >
           </v-layout>
         </v-form>
       </v-card-text>

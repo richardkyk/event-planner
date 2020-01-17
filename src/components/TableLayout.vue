@@ -3,8 +3,12 @@
     <v-card flat class="mx-3 mb-3">
       <!-- This is the tool bar -->
       <v-toolbar color="indigo">
-        <span class="white--text font-weight-thin display-2">{{table.tableNum}}</span>
-        <v-toolbar-title class="text-xs white--text font-weight-thin">{{table.desc}}</v-toolbar-title>
+        <span class="white--text font-weight-thin display-2">{{
+          table.tableNum
+        }}</span>
+        <v-toolbar-title class="text-xs white--text font-weight-thin">{{
+          table.desc
+        }}</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn icon>
           <v-icon @click.stop="editTable(table)" color="white">edit</v-icon>
@@ -25,80 +29,97 @@
 
       <!-- The expansion panel for the guests -->
       <v-list two-line>
-        <v-list-group v-for="(guest, index) in tableGuests" :key="index" no-action>
-          <template v-slot:activator>
+        <draggable
+          v-model="tableGuests"
+          v-bind="{ group: 'people' }"
+          style="min-height: 150px"
+        >
+          <v-list-group
+            v-for="(guest, index) in tableGuests"
+            :key="index"
+            no-action
+          >
+            <template v-slot:activator>
+              <v-list-tile>
+                <v-layout row>
+                  <v-flex xs1 text-xs-center mr-1>
+                    <v-list-tile-title>{{ index + 1 }}</v-list-tile-title>
+                  </v-flex>
+                  <v-flex>
+                    <v-list-tile-title>{{ guest.name }}</v-list-tile-title>
+
+                    <v-list-tile-sub-title>{{
+                      guest.dietary
+                    }}</v-list-tile-sub-title>
+                  </v-flex>
+                  <v-spacer></v-spacer>
+                  <v-icon v-if="guest.flight">flight</v-icon>
+                  <v-icon v-if="guest.accom">hotel</v-icon>
+                </v-layout>
+              </v-list-tile>
+            </template>
+            <!-- </draggable> -->
+            <!-- The icons for flight, accomodation, edit and delete -->
             <v-list-tile>
               <v-layout row>
-                <v-flex xs1 text-xs-center mr-1>
-                  <v-list-tile-title>{{index+1}}</v-list-tile-title>
+                <!-- Toggle flight -->
+                <v-flex text-xs-center>
+                  <v-icon @click="toggleIcon(guest, 'flight', !guest.flight)"
+                    >airplanemode_active</v-icon
+                  >
                 </v-flex>
-                <v-flex>
-                  <v-list-tile-title>{{ guest.name }}</v-list-tile-title>
-                  <v-list-tile-sub-title>{{guest.dietary}}</v-list-tile-sub-title>
+                <!-- Toggle accommodation -->
+                <v-flex text-xs-center>
+                  <v-icon @click="toggleIcon(guest, 'accom', !guest.accom)"
+                    >hotel</v-icon
+                  >
                 </v-flex>
-                <v-spacer></v-spacer>
-                <v-icon v-if="guest.flight">flight</v-icon>
-                <v-icon v-if="guest.accom">hotel</v-icon>
+
+                <!-- Dietary options -->
+                <v-flex text-xs-center>
+                  <v-menu>
+                    <v-icon slot="activator">restaurant</v-icon>
+
+                    <v-list v-if="dietary.length > 0">
+                      <v-list-tile
+                        v-for="(item, i) in dietary"
+                        :key="i"
+                        :v-model="guest.dietary"
+                        @click="selectDietary(guest, item)"
+                      >
+                        <v-list-tile-title>{{ item }}</v-list-tile-title>
+                      </v-list-tile>
+                    </v-list>
+                    <v-list v-else>
+                      <v-list-tile>Please add some dietary options</v-list-tile>
+                    </v-list>
+                  </v-menu>
+                </v-flex>
+                <!-- Edit guest name -->
+                <v-flex text-xs-center>
+                  <v-icon @click.stop="editTable(guest)">edit</v-icon>
+                </v-flex>
+                <!-- Delete guest -->
+                <v-flex text-xs-center>
+                  <v-icon @click="removeGuest(guest)">delete</v-icon>
+                </v-flex>
               </v-layout>
             </v-list-tile>
-          </template>
-
-          <!-- The icons for flight, accomodation, edit and delete -->
-          <v-list-tile>
-            <v-layout row>
-              <!-- Toggle flight -->
-              <v-flex text-xs-center>
-                <v-icon @click="toggleIcon(guest, 'flight', !guest.flight)">airplanemode_active</v-icon>
-              </v-flex>
-              <!-- Toggle accommodation -->
-              <v-flex text-xs-center>
-                <v-icon @click="toggleIcon(guest, 'accom', !guest.accom)">hotel</v-icon>
-              </v-flex>
-
-              <!-- Dietary options -->
-              <v-flex text-xs-center>
-                <v-menu>
-                  <v-icon slot="activator">restaurant</v-icon>
-
-                  <v-list v-if="dietary.length > 0">
-                    <v-list-tile
-                      v-for="(item, i) in dietary"
-                      :key="i"
-                      :v-model="guest.dietary"
-                      @click="selectDietary(guest, item)"
-                    >
-                      <v-list-tile-title>{{ item }}</v-list-tile-title>
-                    </v-list-tile>
-                  </v-list>
-                  <v-list v-else>
-                    <v-list-tile>Please add some dietary options</v-list-tile>
-                  </v-list>
-                </v-menu>
-              </v-flex>
-              <!-- Edit guest name -->
-              <v-flex text-xs-center>
-                <v-icon @click.stop="editTable(guest)">edit</v-icon>
-              </v-flex>
-              <!-- Delete guest -->
-              <v-flex text-xs-center>
-                <v-icon @click="removeGuest(guest)">delete</v-icon>
-              </v-flex>
-            </v-layout>
-          </v-list-tile>
-        </v-list-group>
-
-        <TablePopup ref="tablePopup" />
+          </v-list-group>
+          <TablePopup ref="tablePopup" />
+        </draggable>
       </v-list>
     </v-card>
   </div>
 </template>
 
 <script>
+import draggable from "vuedraggable";
 import TablePopup from "@/components/TablePopup";
 import { arrayUnion, arrayRemove } from "vuex-easy-firestore";
 
 export default {
-  components: { TablePopup },
+  components: { TablePopup, draggable },
   props: ["table"],
   data() {
     return {
@@ -106,8 +127,30 @@ export default {
     };
   },
   computed: {
-    tableGuests() {
-      return this.$store.getters["tables/tableGuests"](this.table.id);
+    tableGuests: {
+      get() {
+        return this.$store.getters["tables/tableGuests"](this.table.id);
+      },
+      set(value) {
+        const guestIdChange = value
+          .filter(guest => guest.tableId != this.table.id)
+          .map(guest => guest.id);
+
+        guestIdChange.map(id => {
+          const payload = {
+            id,
+            tableNum: this.table.tableNum,
+            tableId: this.table.id
+          };
+          this.$store.dispatch("guests/patch", payload);
+        });
+
+        const tablePayload = {
+          id: this.table.id,
+          guests: value.map(guest => guest.id)
+        };
+        this.$store.dispatch("tables/patch", tablePayload);
+      }
     },
     dietary() {
       return this.$store.getters["dietary/options"].options
