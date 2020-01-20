@@ -3,12 +3,16 @@
     <v-card flat class="mx-3 mb-3">
       <!-- This is the tool bar -->
       <v-toolbar color="indigo">
-        <span class="white--text font-weight-thin display-2">{{
+        <span class="white--text font-weight-thin display-2">
+          {{
           table.tableNum
-        }}</span>
-        <v-toolbar-title class="text-xs white--text font-weight-thin">{{
+          }}
+        </span>
+        <v-toolbar-title class="text-xs white--text font-weight-thin">
+          {{
           table.desc
-        }}</v-toolbar-title>
+          }}
+        </v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn icon>
           <v-icon @click.stop="editTable(table)" color="white">edit</v-icon>
@@ -29,16 +33,8 @@
 
       <!-- The expansion panel for the guests -->
       <v-list two-line>
-        <draggable
-          v-model="tableGuests"
-          v-bind="{ group: 'people' }"
-          style="min-height: 150px"
-        >
-          <v-list-group
-            v-for="(guest, index) in tableGuests"
-            :key="index"
-            no-action
-          >
+        <draggable v-model="tableGuests" v-bind="{ group: 'people' }" style="min-height: 150px">
+          <v-list-group v-for="(guest, index) in tableGuests" :key="index" no-action>
             <template v-slot:activator>
               <v-list-tile>
                 <v-layout row>
@@ -48,9 +44,11 @@
                   <v-flex>
                     <v-list-tile-title>{{ guest.name }}</v-list-tile-title>
 
-                    <v-list-tile-sub-title>{{
+                    <v-list-tile-sub-title>
+                      {{
                       guest.dietary
-                    }}</v-list-tile-sub-title>
+                      }}
+                    </v-list-tile-sub-title>
                   </v-flex>
                   <v-spacer></v-spacer>
                   <v-icon v-if="guest.flight">flight</v-icon>
@@ -58,21 +56,16 @@
                 </v-layout>
               </v-list-tile>
             </template>
-            <!-- </draggable> -->
             <!-- The icons for flight, accomodation, edit and delete -->
             <v-list-tile>
               <v-layout row>
                 <!-- Toggle flight -->
                 <v-flex text-xs-center>
-                  <v-icon @click="toggleIcon(guest, 'flight', !guest.flight)"
-                    >airplanemode_active</v-icon
-                  >
+                  <v-icon @click="toggleIcon(guest, 'flight', !guest.flight)">airplanemode_active</v-icon>
                 </v-flex>
                 <!-- Toggle accommodation -->
                 <v-flex text-xs-center>
-                  <v-icon @click="toggleIcon(guest, 'accom', !guest.accom)"
-                    >hotel</v-icon
-                  >
+                  <v-icon @click="toggleIcon(guest, 'accom', !guest.accom)">hotel</v-icon>
                 </v-flex>
 
                 <!-- Dietary options -->

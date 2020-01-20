@@ -7,6 +7,7 @@ import Flights from "./views/Flights.vue";
 import Accommodation from "./views/Accommodation.vue";
 import Dietary from "./views/Dietary.vue";
 import Login from "./views/Login.vue";
+import Floorplan from "./views/Floorplan.vue";
 import store from "./store";
 
 Vue.use(Router);
@@ -18,6 +19,7 @@ const router = new Router({
     { path: "/", name: "dashboard", component: Dashboard },
     { path: "/guests", name: "guests", component: Guests },
     { path: "/tables", name: "tables", component: Tables },
+    { path: "/floorplan", name: "floorplan", component: Floorplan },
     { path: "/flights", name: "flights", component: Flights },
     { path: "/accommodation", name: "accommodation", component: Accommodation },
     { path: "/dietary", name: "dietary", component: Dietary },

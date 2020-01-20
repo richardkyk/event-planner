@@ -37,7 +37,12 @@ export default {
   methods: {
     addTable() {
       const newId = Object.keys(this.$store.state.tables.data).length + 1;
-      const data = { tableNum: newId, desc: "", guests: [] };
+      const data = {
+        tableNum: newId,
+        desc: "",
+        guests: [],
+        coords: { x: 75, y: 75 }
+      };
       this.$store.dispatch("tables/set", data);
     }
   }
