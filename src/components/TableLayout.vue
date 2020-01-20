@@ -1,6 +1,6 @@
 <template>
   <div class="table">
-    <v-card flat class="mx-3 mb-3">
+    <v-card flat class="mx-3 mb-3" elevation="5">
       <!-- This is the tool bar -->
       <v-toolbar color="indigo">
         <span class="white--text font-weight-thin display-2">
