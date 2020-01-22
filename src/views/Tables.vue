@@ -1,19 +1,19 @@
 <template>
   <div class="tables">
     <v-container class="my-5">
-      <v-layout row ml-2>
-        <v-flex xs12 sm6 md4 lg3>
-          <v-btn @click="addTable()" small flat color="grey">
+      <v-row ml-2>
+        <v-col sm="12" md="6" lg="4" xl="3">
+          <v-btn @click="addTable()" small text color="grey">
             <v-icon left small>add</v-icon>
             <span>Add Table</span>
           </v-btn>
-        </v-flex>
-      </v-layout>
-      <v-layout row wrap>
-        <v-flex xs12 sm6 md4 lg3 v-for="table in sortedTables" :key="table.id">
+        </v-col>
+      </v-row>
+      <v-row row wrap>
+        <v-col sm="12" md="6" lg="4" xl="3" v-for="table in sortedTables" :key="table.id">
           <TableLayout v-bind:table="table" />
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-container>
   </div>
 </template>

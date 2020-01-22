@@ -3,106 +3,108 @@
     <v-card flat class="mx-3 mb-3" elevation="5">
       <!-- This is the tool bar -->
       <v-toolbar color="indigo">
-        <span class="white--text font-weight-thin display-2">
-          {{
-          table.tableNum
-          }}
-        </span>
-        <v-toolbar-title class="text-xs white--text font-weight-thin">
-          {{
-          table.desc
-          }}
-        </v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-btn icon>
-          <v-icon @click.stop="editTable(table)" color="white">edit</v-icon>
-        </v-btn>
+        <v-row px-12 no-gutters>
+          <v-col cols="auto" class="pl-2 pr-4">
+            <span class="white--text font-weight-thin display-2">{{ table.tableNum }}</span>
+          </v-col>
+          <v-col cols="7" align-self="center">
+            <v-toolbar-title class="text-xs white--text font-weight-thin">{{ table.desc }}</v-toolbar-title>
+          </v-col>
+          <v-spacer></v-spacer>
+          <v-col cols="2" align-self="center">
+            <v-btn icon>
+              <v-icon @click.stop="editTable(table)" color="white">edit</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-toolbar>
 
       <!-- This is the textfield for the guest's name -->
-      <v-layout row>
-        <v-flex xs12>
+      <v-row no-gutters>
+        <v-col xs12>
           <v-text-field
-            class="mx-3"
+            class="mx-5"
             label="Guest's name"
             v-model="name"
             v-on:keyup.enter="addGuest"
           ></v-text-field>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
 
       <!-- The expansion panel for the guests -->
       <v-list two-line>
         <draggable v-model="tableGuests" v-bind="{ group: 'people' }" style="min-height: 150px">
           <v-list-group v-for="(guest, index) in tableGuests" :key="index" no-action>
             <template v-slot:activator>
-              <v-list-tile>
-                <v-layout row>
-                  <v-flex xs1 text-xs-center mr-1>
-                    <v-list-tile-title>{{ index + 1 }}</v-list-tile-title>
-                  </v-flex>
-                  <v-flex>
-                    <v-list-tile-title>{{ guest.name }}</v-list-tile-title>
+              <v-list-item-content>
+                <v-row no-gutters>
+                  <v-col cols="1" class="text-center mr-2">
+                    <v-list-item-title>{{ index + 1 }}</v-list-item-title>
+                  </v-col>
+                  <v-col>
+                    <v-list-item-title>{{ guest.name }}</v-list-item-title>
 
-                    <v-list-tile-sub-title>
-                      {{
-                      guest.dietary
-                      }}
-                    </v-list-tile-sub-title>
-                  </v-flex>
+                    <v-list-item-subtitle>{{ guest.dietary }}</v-list-item-subtitle>
+                  </v-col>
                   <v-spacer></v-spacer>
-                  <v-icon v-if="guest.flight">flight</v-icon>
-                  <v-icon v-if="guest.accom">hotel</v-icon>
-                </v-layout>
-              </v-list-tile>
+                  <v-col v-if="guest.flight" cols="1">
+                    <v-icon>flight</v-icon>
+                  </v-col>
+                  <v-col v-if="guest.accom" cols="1">
+                    <v-icon>hotel</v-icon>
+                  </v-col>
+                </v-row>
+              </v-list-item-content>
             </template>
             <!-- The icons for flight, accomodation, edit and delete -->
-            <v-list-tile>
-              <v-layout row>
+            <v-list-item>
+              <v-row no-gutters>
                 <!-- Toggle flight -->
-                <v-flex text-xs-center>
+                <v-col text-xs-center>
                   <v-icon @click="toggleIcon(guest, 'flight', !guest.flight)">airplanemode_active</v-icon>
-                </v-flex>
+                </v-col>
                 <!-- Toggle accommodation -->
-                <v-flex text-xs-center>
+                <v-col text-xs-center>
                   <v-icon @click="toggleIcon(guest, 'accom', !guest.accom)">hotel</v-icon>
-                </v-flex>
+                </v-col>
 
                 <!-- Dietary options -->
-                <v-flex text-xs-center>
+                <v-col text-xs-center>
                   <v-menu>
-                    <v-icon slot="activator">restaurant</v-icon>
+                    <template v-slot:activator="{ on: menu }">
+                      <v-icon v-on="menu">restaurant</v-icon>
+                    </template>
 
                     <v-list v-if="dietary.length > 0">
-                      <v-list-tile
+                      <v-list-item
                         v-for="(item, i) in dietary"
                         :key="i"
                         :v-model="guest.dietary"
                         @click="selectDietary(guest, item)"
                       >
-                        <v-list-tile-title>{{ item }}</v-list-tile-title>
-                      </v-list-tile>
+                        <v-list-item-title>{{ item }}</v-list-item-title>
+                      </v-list-item>
                     </v-list>
                     <v-list v-else>
-                      <v-list-tile>Please add some dietary options</v-list-tile>
+                      <v-list-item>Please add some dietary options</v-list-item>
                     </v-list>
                   </v-menu>
-                </v-flex>
+                </v-col>
                 <!-- Edit guest name -->
-                <v-flex text-xs-center>
+                <v-col text-xs-center>
                   <v-icon @click.stop="editTable(guest)">edit</v-icon>
-                </v-flex>
+                </v-col>
                 <!-- Delete guest -->
-                <v-flex text-xs-center>
+                <v-col text-xs-center>
                   <v-icon @click="removeGuest(guest)">delete</v-icon>
-                </v-flex>
-              </v-layout>
-            </v-list-tile>
+                </v-col>
+              </v-row>
+            </v-list-item>
           </v-list-group>
-          <TablePopup ref="tablePopup" />
         </draggable>
       </v-list>
     </v-card>
+    <TablePopup ref="tablePopup" />
   </div>
 </template>
 
@@ -239,19 +241,20 @@ export default {
   }
 };
 </script>
-
-<style>
-.v-list--two-line .v-list__tile {
+<style lang="stylus" scoped>
+>>> .v-list--two-line .v-list-item {
   height: 50px;
-}
-.v-messages {
-  min-height: 0px;
-}
-.v-list__group__items--no-action .v-list__tile {
-  padding-left: 16px;
+  min-height: 50px !important;
 }
 
-.v-list__group__header__append-icon {
-  padding-left: 0px !important;
+>>> .v-text-field .v-input__control {
+  height: 35px;
+}
+
+>>> .v-list-group {
+  .v-list-group__header, .v-list-item__icon.v-list-group__header__append-icon {
+    min-width: 0;
+  }
 }
 </style>
+

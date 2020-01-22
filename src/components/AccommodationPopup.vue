@@ -1,101 +1,111 @@
 <template>
   <v-dialog persistent v-model="dialog" max-width="500">
     <v-card>
-      <v-card-text>
-        <v-form class="px-3" ref="form">
-          <!-- Description text field -->
-          <v-layout row>
-            <v-text-field
-              :rules="inputRules"
-              v-model="desc"
-              label="Description"
-              prepend-icon="hotel"
-            ></v-text-field>
-          </v-layout>
-
-          <!-- Address text field -->
-          <v-layout row>
-            <v-text-field
-              :rules="inputRules"
-              v-model="address"
-              label="Address"
-              prepend-icon="location_on"
-            ></v-text-field>
-          </v-layout>
-
-          <!-- Suburb and postcode text field -->
-          <v-layout row>
-            <v-text-field
-              :rules="inputRules"
-              v-model="suburb"
-              label="Suburb"
-              prepend-icon="location_city"
-            ></v-text-field>
-            <v-spacer></v-spacer>
-            <v-text-field
-              :rules="inputRules"
-              v-model="postCode"
-              label="Postcode"
-              prepend-icon="map"
-            ></v-text-field>
-          </v-layout>
-
-          <v-layout row>
-            <!-- This is the check-in date picker -->
-            <v-menu :close-on-content-click="false">
+      <v-form ref="form">
+        <v-card-text class="px-4">
+          <v-row>
+            <!-- Description text field -->
+            <v-col cols="12">
               <v-text-field
-                readonly
-                :rules="dateRules"
-                :value="formattedDate(checkInDate)"
-                slot="activator"
-                label="Check-in Date"
-                prepend-icon="date_range"
+                :rules="inputRules"
+                v-model="desc"
+                label="Description"
+                prepend-icon="hotel"
               ></v-text-field>
-              <v-date-picker v-model="checkInDate"></v-date-picker>
-            </v-menu>
-            <v-spacer></v-spacer>
+            </v-col>
+
+            <!-- Address text field -->
+            <v-col cols="12">
+              <v-text-field
+                :rules="inputRules"
+                v-model="address"
+                label="Address"
+                prepend-icon="location_on"
+              ></v-text-field>
+            </v-col>
+
+            <!-- Suburb and postcode text field -->
+            <v-col cols="6">
+              <v-text-field
+                :rules="inputRules"
+                v-model="suburb"
+                label="Suburb"
+                prepend-icon="location_city"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-spacer></v-spacer>
+              <v-text-field
+                :rules="inputRules"
+                v-model="postCode"
+                label="Postcode"
+                prepend-icon="map"
+              ></v-text-field>
+            </v-col>
+
+            <!-- This is the check-in date picker -->
+            <v-col cols="6">
+              <v-menu :close-on-content-click="false">
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    readonly
+                    :rules="dateRules"
+                    :value="formattedDate(checkInDate)"
+                    v-on="on"
+                    label="Check-in Date"
+                    prepend-icon="date_range"
+                  ></v-text-field>
+                </template>
+                <v-date-picker v-model="checkInDate"></v-date-picker>
+              </v-menu>
+            </v-col>
 
             <!-- This is the checkout date picker -->
-            <v-menu :close-on-content-click="false">
-              <v-text-field
-                readonly
-                :rules="dateRules"
-                :value="formattedDate(checkOutDate)"
-                slot="activator"
-                label="Checkout Date"
-                prepend-icon="date_range"
-              ></v-text-field>
-              <v-date-picker v-model="checkOutDate"></v-date-picker>
-            </v-menu>
-          </v-layout>
+            <v-col cols="6">
+              <v-menu :close-on-content-click="false">
+                <template v-slot:activator="{on}">
+                  <v-text-field
+                    readonly
+                    :rules="dateRules"
+                    :value="formattedDate(checkOutDate)"
+                    v-on="on"
+                    label="Checkout Date"
+                    prepend-icon="date_range"
+                  ></v-text-field>
+                </template>
+                <v-date-picker v-model="checkOutDate"></v-date-picker>
+              </v-menu>
+            </v-col>
 
-          <v-combobox
-            v-model="guests"
-            :items="allAccomGuests"
-            chips
-            multiple
-            item-text="name"
-            item-value="name"
-            label="Guests"
-            flat
-            prepend-icon="people"
-            hide-selected
-          >
-            <template v-slot:selection="data">
-              <v-chip small :selected="data.selected" close @input="remove(data.item)">
-                <strong>{{ data.item.name }}</strong>&nbsp;
-              </v-chip>
-            </template>
-          </v-combobox>
-
-          <v-layout row>
-            <v-btn class="text-none" flat @click.stop="dialog = false">Close</v-btn>
-            <v-btn class="text-none" color="error" flat @click="deleteAccom" v-if="id">Delete</v-btn>
-            <v-spacer></v-spacer>
-            <v-btn class="text-none" color="primary" flat @click="submit">Submit</v-btn>
-          </v-layout>
-        </v-form>
-      </v-card-text>
+            <v-col cols="12">
+              <v-combobox
+                v-model="guests"
+                :items="allAccomGuests"
+                chips
+                multiple
+                item-text="name"
+                item-value="name"
+                label="Guests"
+                flat
+                prepend-icon="people"
+                hide-selected
+              >
+                <template v-slot:selection="data">
+                  <v-chip small :input-value="data.selected" close @click:close="remove(data.item)">
+                    <strong>{{ data.item.name }}</strong>&nbsp;
+                  </v-chip>
+                </template>
+              </v-combobox>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn class="text-none" color="error" @click="deleteAccom" v-if="id">Delete</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn class="text-none" @click.stop="dialog = false">Close</v-btn>
+          <v-btn class="text-none" color="primary" @click="submit">Submit</v-btn>
+        </v-card-actions>
+      </v-form>
     </v-card>
   </v-dialog>
 </template>
@@ -211,14 +221,16 @@ export default {
     },
 
     deleteAccom() {
-      this.initialGuests.forEach(guestId => {
-        this.$store.dispatch("guests/patch", {
-          id: guestId,
-          accomId: arrayRemove(this.id)
+      if (confirm("Are you sure you want to delete this item?")) {
+        this.initialGuests.forEach(guestId => {
+          this.$store.dispatch("guests/patch", {
+            id: guestId,
+            accomId: arrayRemove(this.id)
+          });
         });
-      });
-      this.$store.dispatch("accommodations/delete", this.id);
-      this.dialog = false;
+        this.$store.dispatch("accommodations/delete", this.id);
+        this.dialog = false;
+      }
     },
     formattedDate(date) {
       return date ? moment(date, "YYYY-MM-DD").format("Do MMM YYYY") : null;

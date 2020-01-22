@@ -1,21 +1,21 @@
 <template>
   <div class="accommodations">
-    <v-container class="my-5">
-      <v-layout row ml-2>
-        <v-flex xs12 sm6 md4 lg3>
-          <v-btn @click="addAccommodation()" small flat color="grey">
+    <v-container>
+      <v-row>
+        <v-col sm="12" md="6" lg="4" xl="3">
+          <v-btn @click="addAccommodation()" small text color="grey">
             <v-icon left small>add</v-icon>
             <span>Add Accommodation</span>
             <AccommodationPopup ref="accommodationPopup" />
           </v-btn>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
 
-      <v-layout row wrap>
-        <v-flex xs12 sm6 md4 lg3 v-for="accom in accommodations" :key="accom.id">
+      <v-row wrap>
+        <v-col sm="12" md="6" lg="4" xl="3" v-for="accom in accommodations" :key="accom.id">
           <AccommodationLayout v-bind:accom="accom" />
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-container>
   </div>
 </template>

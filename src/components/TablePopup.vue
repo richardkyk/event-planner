@@ -1,16 +1,16 @@
 <template>
   <v-dialog persistent v-model="dialog" max-width="300px">
-    <v-card>
-      <v-text-field class="mx-3" ref="text" v-model="value" v-on:keyup.enter="submit"></v-text-field>
-      <v-layout row justify-space-between>
+    <v-form>
+      <v-card>
+        <v-text-field class="mx-3" ref="text" v-model="value" v-on:keyup.enter="submit"></v-text-field>
+
         <v-card-actions>
-          <v-btn flat color="primary" @click.stop="dialog = false">Close</v-btn>
+          <v-btn color="normal" @click.stop="dialog = false">Close</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="submit">Submit</v-btn>
         </v-card-actions>
-        <v-card-actions>
-          <v-btn flat color="primary" @click="submit">Submit</v-btn>
-        </v-card-actions>
-      </v-layout>
-    </v-card>
+      </v-card>
+    </v-form>
   </v-dialog>
 </template>
 
@@ -30,7 +30,9 @@ export default {
         this.value = data.name;
       }
       this.dialog = true;
-      this.$nextTick(this.$refs.text.focus);
+      this.$nextTick(() => console.log(this.$refs.text));
+      this.$nextTick(() => this.$refs.text.focus());
+      // this.$refs.text.focus();
     },
     submit() {
       switch (this.type) {
