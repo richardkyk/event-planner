@@ -1,11 +1,13 @@
 <template>
   <v-app id="login" class="grey lighten-4">
     <v-container fluid fill-height>
-      <v-layout align-center justify-center>
-        <v-flex xs12 sm8 md4>
+      <v-row align-center justify-center>
+        <v-col sm="12" md="6" lg="4" xl="3">
           <v-card class="elevation-5">
             <v-toolbar color="#3f51b5" dark flat>
-              <v-toolbar-title class="font-weight-thin">Guest App</v-toolbar-title>
+              <v-toolbar-title class="font-weight-thin"
+                >Guest App</v-toolbar-title
+              >
             </v-toolbar>
             <v-card-text>
               <v-form>
@@ -33,12 +35,13 @@
                   :loading="loading"
                   color="#3f51b5"
                   class="text-none white--text font-weight-thin"
-                >Login</v-btn>
+                  >Login</v-btn
+                >
               </v-card-actions>
             </v-card-text>
           </v-card>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-container>
   </v-app>
 </template>
@@ -70,7 +73,6 @@ export default {
   }
 };
 </script>
-
 
 <style scoped>
 .v-card__actions {

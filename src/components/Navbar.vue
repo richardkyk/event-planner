@@ -31,17 +31,15 @@
           router
           :to="link.route"
         >
-          <v-layout row>
-            <v-list-item-action>
-              <v-icon class="white--text">{{ link.icon }}</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title
-                class="white--text subheading font-weight-light"
-                >{{ link.text }}</v-list-item-title
-              >
-            </v-list-item-content>
-          </v-layout>
+          <v-list-item-action>
+            <v-icon class="white--text">{{ link.icon }}</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title
+              class="white--text subheading font-weight-light"
+              >{{ link.text }}</v-list-item-title
+            >
+          </v-list-item-content>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
