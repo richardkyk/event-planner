@@ -1,87 +1,52 @@
 <template>
-  <div class="home">
-    <v-container class="my-5">
-      <v-layout row class="mb-3" wrap>
-        <v-btn small flat color="grey" @click="sortBy('name')">
-          <v-icon left small>person</v-icon>
-          <span class="caption">By name</span>
-        </v-btn>
-        <v-btn small flat color="grey" @click="sortBy('tableNum')">
-          <v-icon left small>local_dining</v-icon>
-          <span class="caption">By table</span>
-        </v-btn>
-        <v-btn small flat color="grey" @click="sortBy('dietary')">
-          <v-icon left small>restaurant</v-icon>
-          <span class="caption">Dietary Selection</span>
-        </v-btn>
-        <v-btn small flat color="grey" @click="sortBy('accom')">
-          <v-icon left small>hotel</v-icon>
-          <span class="caption">By accomodation</span>
-        </v-btn>
-        <v-btn small flat color="grey" @click="sortBy('flight')">
-          <v-icon left small>airplanemode_active</v-icon>
-          <span class="caption">By flight</span>
-        </v-btn>
-        <v-btn small flat color="grey" @click="sortBy('rsvp')">
-          <v-icon left small>how_to_reg</v-icon>
-          <span class="caption">By rsvp</span>
-        </v-btn>
-        <v-spacer></v-spacer>
+  <v-container fluid class="my-5">
+    <v-data-table
+      :headers="headers"
+      :search="search"
+      :items="sortedGuests"
+      :custom-filter="customFilter"
+      sort-by="name"
+      class="elevation-2"
+      ref="dataTable"
+    >
+      <template v-slot:item.accom="{ item }">{{ accomStatus(item)}}</template>
+      <template v-slot:item.flight="{ item }">{{ flightStatus(item) }}</template>
+      <template v-slot:item.rsvp="{ item }">
+        <v-chip @click="rsvp(item)" :color="getColor(item.rsvp)" dark>{{ item.rsvp }}</v-chip>
+      </template>
 
-        <v-btn small flat color="grey" @click="download">
-          <v-icon left small>cloud_download</v-icon>
-          <span class="caption">Export Data</span>
-        </v-btn>
-      </v-layout>
+      <!-- <template v-slot:item.rsvp="props">
+        <v-edit-dialog :return-value.sync="props.item.rsvp">
+          {{ props.item.rsvp }}
+          <template v-slot:input>
+            <v-text-field v-model="props.item.rsvp" label="Edit" single-line counter></v-text-field>
+          </template>
+        </v-edit-dialog>
+      </template>-->
 
-      <v-card color="white" flat v-for="guest in sortedGuests" :key="guest.id">
-        <v-layout row wrap :class="`pa-3 guest ${guest.rsvp}`">
-          <v-flex xs6 sm4 md3>
-            <div class="caption grey--text">Name</div>
-            <div>{{guest.name}}</div>
-          </v-flex>
-          <v-flex xs6 sm4 md2>
-            <div class="caption grey--text">Table</div>
-            <div>{{guest.tableNum}}</div>
-          </v-flex>
-          <v-flex xs6 sm4 md2>
-            <div class="caption grey--text">Dietary Selection</div>
-            <div>{{guest.dietary}}</div>
-          </v-flex>
-          <v-flex xs6 sm4 md2>
-            <div class="caption grey--text">Accommodation</div>
-            <div v-if="guest.accom" :class="`${accomStatus(guest)}`">{{accomStatus(guest)}}</div>
-          </v-flex>
-          <v-flex xs6 sm4 md2>
-            <div class="caption grey--text">Flight</div>
-            <div v-if="guest.flight" :class="`${flightStatus(guest)}`">{{flightStatus(guest)}}</div>
-          </v-flex>
-          <v-flex xs6 sm4 md1>
-            <!-- So we can have Unsent, Sent, Accepted, Declined -->
-            <div class="caption grey--text">RSVP</div>
-
-            <v-menu>
-              <v-chip slot="activator" small>
-                {{guest.rsvp}}
-                <v-icon pr-3>arrow_drop_down</v-icon>
-              </v-chip>
-              <v-list>
-                <v-list-tile
-                  v-for="(item, i) in items"
-                  :key="i"
-                  :v-model="guest.rsvp"
-                  @click="changeRSVP(guest, item)"
-                >
-                  <v-list-tile-title>{{ item }}</v-list-tile-title>
-                </v-list-tile>
-              </v-list>
-            </v-menu>
-          </v-flex>
-        </v-layout>
-        <v-divider></v-divider>
-      </v-card>
-    </v-container>
-  </div>
+      <template v-slot:top>
+        <v-toolbar flat color="white">
+          <v-row no-gutters>
+            <v-col cols="12" md="4" lg="3">
+              <v-text-field
+                v-model="search"
+                append-icon="search"
+                label="Search"
+                single-line
+                hide-details
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="8" lg="9" :style="{ 'text-align': 'end', 'padding-top': '5px' }">
+              <v-btn class="btn-fix" small text color="primary" @click="download">
+                <v-icon left small>cloud_download</v-icon>
+                <span class="caption">Export Data</span>
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-toolbar>
+      </template>
+    </v-data-table>
+  </v-container>
 </template>
 
 <script>
@@ -91,8 +56,16 @@ import moment from "moment";
 export default {
   data() {
     return {
-      items: ["unsent", "sent", "accepted", "declined"],
-      prop: "name"
+      rsvpValues: ["unsent", "sent", "accepted", "declined"],
+      search: "",
+      headers: [
+        { text: "Name", value: "name" },
+        { text: "Table", value: "tableNum" },
+        { text: "Dietary", value: "dietary" },
+        { text: "Flight", value: "flight" },
+        { text: "Accommodation", value: "accom" },
+        { text: "RSVP", value: "rsvp" }
+      ]
     };
   },
   computed: {
@@ -107,10 +80,10 @@ export default {
       guests.forEach(guest => {
         data.push({
           Name: guest.name,
-          TableNumber: guest.tableNum,
-          DietarySelection: guest.dietary,
-          AccomStatus: guest.accom ? this.accomStatus(guest) : "",
-          FlightStatus: guest.flight ? this.flightStatus(guest) : "",
+          "Table Number": guest.tableNum,
+          "Dietary Selection": guest.dietary,
+          "Accommodation Status": guest.accom ? this.accomStatus(guest) : "",
+          "Flight Status": guest.flight ? this.flightStatus(guest) : "",
           RSVP: guest.rsvp
         });
       });
@@ -118,18 +91,94 @@ export default {
     }
   },
   methods: {
+    customFilter(value, search, item) {
+      // value is the property that is being iterated
+      // search is the search term
+      // item is the object
+      const searchLC = search.toLowerCase();
+      if (value == null || search == null) {
+        return false;
+      }
+      const searchObject = (({ name, tableNum, dietary, rsvp }) => ({
+        name,
+        table: tableNum,
+        dietary,
+        flight: this.flightStatus(item),
+        accom: this.accomStatus(item),
+        rsvp
+      }))(item);
+      if (search.includes("|")) {
+        // This will search for either of the items
+        const searchItems = searchLC.split("|").filter(el => el != "");
+        return searchItems.some(val => {
+          return this.filterValue(val, searchObject);
+        });
+      } else if (search.includes("&")) {
+        // This will search for both of the items
+        const searchItems = searchLC.split("&").filter(el => el != "");
+        return searchItems.every(val => {
+          return this.filterValue(val, searchObject);
+        });
+      } else {
+        return this.filterValue(searchLC, searchObject);
+      }
+    },
+    filterValue(val, searchObject) {
+      // Essentially this is checking for a :
+      // If it exists, then it will include the keys in the search string
+      // This is to avoid typing in the property name and getting every entry returned
+      // Since they all have the property
+      if (val.includes(":")) {
+        return Object.keys(searchObject)
+          .map(
+            k =>
+              `${k.toString().toLowerCase()}:${searchObject[k]
+                .toString()
+                .toLowerCase()}`
+          )
+          .join(";")
+          .includes(val.toLowerCase());
+      } else {
+        return Object.keys(searchObject)
+          .map(k => `${searchObject[k].toString().toLowerCase()}`)
+          .join(";")
+          .includes(val.toLowerCase());
+      }
+    },
+    getColor(rsvp) {
+      switch (rsvp) {
+        case "unsent":
+          return "orange";
+        case "sent":
+          return "teal";
+        case "accepted":
+          return "green";
+        case "declined":
+          return "red";
+      }
+    },
     flightStatus(guest) {
-      return guest.flightId.length > 0 ? "assigned" : "unassigned";
+      return guest.flight
+        ? guest.flightId.length > 0
+          ? "Assigned"
+          : "Unassigned"
+        : "";
     },
     accomStatus(guest) {
-      return guest.accomId.length > 0 ? "assigned" : "unassigned";
+      return guest.accom
+        ? guest.accomId.length > 0
+          ? "Assigned"
+          : "Unassigned"
+        : "";
     },
-    changeRSVP(guest, item) {
-      this.$store.dispatch("guests/patch", { id: guest.id, rsvp: item });
+    rsvp(guest) {
+      const oldRsvpIndex = this.rsvpValues.indexOf(guest.rsvp);
+      const newRsvpIndex = (oldRsvpIndex + 1) % this.rsvpValues.length;
+      const newRsvp = this.rsvpValues[newRsvpIndex];
+      const payload = { id: guest.id, rsvp: newRsvp };
+      this.$store.dispatch("guests/patch", payload);
     },
-    sortBy(prop) {
-      this.prop = prop;
-    },
+
     download() {
       const guestWS = XLSX.utils.json_to_sheet(this.exportData);
       const wb = XLSX.utils.book_new();
@@ -144,59 +193,3 @@ export default {
 };
 </script>
 
-<style>
-.guest.accepted {
-  border-left: 4px solid#79d279;
-}
-
-.guest.sent {
-  border-left: 4px solid orange;
-}
-
-.guest.declined {
-  border-left: 4px solid tomato;
-}
-
-.guest.unsent {
-  border-left: 4px solid #3cd1c2;
-}
-.v-input__control .v-input__slot,
-.v-text-field.v-text-field--solo .v-input__control {
-  /* height: 0px; */
-  min-height: 15px !important;
-  /* padding-top: 3px !important; */
-  display: flex !important;
-  align-items: center !important;
-}
-
-.rsvp {
-  height: 0px;
-}
-.rsvp .v-input__control .v-input__slot {
-  padding: 0 0px !important;
-  cursor: pointer;
-}
-
-.guest.accepted .v-chip {
-  background: #79d279;
-  color: white;
-}
-.guest.sent .v-chip {
-  background: orange;
-  color: white;
-}
-.guest.declined .v-chip {
-  background: tomato;
-  color: white;
-}
-.guest.unsent .v-chip {
-  background: #3cd1c2;
-  color: white;
-}
-.unassigned {
-  color: orange;
-}
-.assigned {
-  color: #79d279;
-}
-</style>

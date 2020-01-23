@@ -1,8 +1,8 @@
 <template>
   <v-app id="login" class="grey lighten-4">
-    <v-container fluid fill-height>
-      <v-row align-center justify-center>
-        <v-col sm="12" md="6" lg="4" xl="3">
+    <v-container class="fill-height" fluid>
+      <v-row align="center" justify="center">
+        <v-col cols="12" sm="8" md="5">
           <v-card class="elevation-5">
             <v-toolbar color="#3f51b5" dark flat>
               <v-toolbar-title class="font-weight-thin"
