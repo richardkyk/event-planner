@@ -30,9 +30,7 @@ export default {
         this.value = data.name;
       }
       this.dialog = true;
-      this.$nextTick(() => console.log(this.$refs.text));
       this.$nextTick(() => this.$refs.text.focus());
-      // this.$refs.text.focus();
     },
     submit() {
       switch (this.type) {

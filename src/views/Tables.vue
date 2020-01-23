@@ -1,6 +1,6 @@
 <template>
   <div class="tables">
-    <v-container class="my-5">
+    <v-container>
       <v-row ml-2>
         <v-col sm="12" md="6" lg="4" xl="3">
           <v-btn @click="addTable()" small text color="grey">
@@ -9,7 +9,7 @@
           </v-btn>
         </v-col>
       </v-row>
-      <v-row row wrap>
+      <v-row wrap>
         <v-col sm="12" md="6" lg="4" xl="3" v-for="table in sortedTables" :key="table.id">
           <TableLayout v-bind:table="table" />
         </v-col>
@@ -41,7 +41,7 @@ export default {
         tableNum: newId,
         desc: "",
         guests: [],
-        coords: { x: 75, y: 75 }
+        coords: { x: 85, y: 85 }
       };
       this.$store.dispatch("tables/set", data);
     }

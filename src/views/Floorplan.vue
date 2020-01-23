@@ -1,8 +1,7 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <svg
-      width="1750"
-      height="900"
+      viewBox="0 0 1500 775"
       xmlns="http://www.w3.org/2000/svg"
       version="1.1"
       style="outline: 1px solid #630;"

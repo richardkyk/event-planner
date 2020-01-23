@@ -10,7 +10,7 @@
       transform="translate(-225,-75)"
       fill="#3f51b5"
     />
-    <circle v-else @mousedown="mouseDown" :cx="x" :cy="y" r="75" fill="#3f51b5" />
+    <circle v-else @mousedown="mouseDown" :cx="x" :cy="y" r="85" fill="#3f51b5" />
     <text
       class="svgText"
       :x="x"

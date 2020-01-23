@@ -1,6 +1,6 @@
 <template>
   <div class="accommodations">
-    <v-container>
+    <v-container fluid>
       <v-row>
         <v-col sm="12" md="6" lg="4" xl="3">
           <v-btn @click="addAccommodation()" small text color="grey">

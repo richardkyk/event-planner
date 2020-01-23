@@ -1,109 +1,87 @@
 <template>
   <v-dialog persistent v-model="dialog" max-width="500">
-    <v-card>
-      <v-card-text>
-        <v-form class="px-3" ref="form">
-          <v-layout row>
-            <v-text-field
-              :rules="inputRules"
-              v-model="flightNum"
-              label="Flight number"
-              prepend-icon="local_airport"
-            ></v-text-field>
-            <v-spacer></v-spacer>
-            <v-flex xs3>
+    <v-form ref="form">
+      <v-card>
+        <v-card-text>
+          <v-row>
+            <v-col cols="6">
+              <v-text-field
+                :rules="inputRules"
+                v-model="flightNum"
+                label="Flight number"
+                prepend-icon="local_airport"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
               <v-radio-group row v-model="arrival">
-                <v-radio
-                  color="primary"
-                  label="Arrival"
-                  :value="true"
-                ></v-radio>
-                <v-radio
-                  color="primary"
-                  label="Departure"
-                  :value="false"
-                ></v-radio>
+                <v-radio color="primary" label="Arrival" :value="true"></v-radio>
+                <v-radio color="primary" label="Departure" :value="false"></v-radio>
               </v-radio-group>
-            </v-flex>
-          </v-layout>
+            </v-col>
 
-          <v-layout row>
-            <!-- This is the date picker -->
-            <v-menu :close-on-content-click="false">
-              <v-text-field
-                readonly
-                :rules="dateRules"
-                :value="formattedDate"
-                slot="activator"
-                label="Date"
-                prepend-icon="date_range"
-              ></v-text-field>
-              <v-date-picker v-model="flightDate"></v-date-picker>
-            </v-menu>
-            <v-spacer></v-spacer>
+            <v-col cols="6">
+              <!-- This is the date picker -->
+              <v-menu :close-on-content-click="false">
+                <template v-slot:activator="{on}">
+                  <v-text-field
+                    readonly
+                    :rules="dateRules"
+                    :value="formattedDate"
+                    v-on="on"
+                    label="Date"
+                    prepend-icon="date_range"
+                  ></v-text-field>
+                </template>
+                <v-date-picker v-model="flightDate"></v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col cols="6">
+              <!-- This is the time picker -->
+              <v-menu v-model="showClock" :close-on-content-click="false">
+                <template v-slot:activator="{on}">
+                  <v-text-field
+                    readonly
+                    :rules="dateRules"
+                    :value="flightTime"
+                    v-on="on"
+                    label="Time"
+                    prepend-icon="access_time"
+                  ></v-text-field>
+                </template>
+                <v-time-picker v-if="showClock" v-model="flightTime"></v-time-picker>
+              </v-menu>
+            </v-col>
 
-            <!-- This is the time picker -->
-            <v-menu v-model="showClock" :close-on-content-click="false">
-              <v-text-field
-                readonly
-                :rules="dateRules"
-                :value="flightTime"
-                slot="activator"
-                label="Time"
-                prepend-icon="access_time"
-              ></v-text-field>
-              <v-time-picker
-                v-if="showClock"
-                v-model="flightTime"
-              ></v-time-picker>
-            </v-menu>
-          </v-layout>
-
-          <v-combobox
-            v-model="guests"
-            :items="allFlightGuests"
-            chips
-            multiple
-            item-text="name"
-            item-value="name"
-            label="Passengers"
-            flat
-            prepend-icon="people"
-            hide-selected
-          >
-            <template v-slot:selection="data">
-              <v-chip
-                small
-                :selected="data.selected"
-                close
-                @input="remove(data.item)"
+            <v-col cols="12">
+              <v-combobox
+                v-model="guests"
+                :items="allFlightGuests"
+                chips
+                multiple
+                item-text="name"
+                item-value="name"
+                label="Passengers"
+                flat
+                prepend-icon="people"
+                hide-selected
               >
-                <strong>{{ data.item.name }}</strong
-                >&nbsp;
-              </v-chip>
-            </template>
-          </v-combobox>
-
-          <v-layout class="pt-3 px-0" row>
-            <v-btn
-              flat
-              class="text-none"
-              color="error"
-              @click="deleteFlight"
-              v-if="id"
-              >Delete</v-btn
-            >
+                <template v-slot:selection="data">
+                  <v-chip small :input-value="data.selected" close @click:close="remove(data.item)">
+                    <strong>{{ data.item.name }}</strong>&nbsp;
+                  </v-chip>
+                </template>
+              </v-combobox>
+            </v-col>
+          </v-row>
+          <v-card-actions>
+            <v-btn color="error" @click="deleteFlight" v-if="id">Delete</v-btn>
             <v-spacer></v-spacer>
-            <v-btn class="text-none" flat @click.stop="dialog = false"
-              >Close</v-btn
-            >
-            <v-btn class="text-none" flat color="primary" @click="submit"
-              >Submit</v-btn
-            >
-          </v-layout>
-        </v-form>
-      </v-card-text>
-    </v-card>
+            <v-btn @click.stop="dialog = false">Close</v-btn>
+            <v-btn color="primary" @click="submit">Submit</v-btn>
+          </v-card-actions>
+        </v-card-text>
+      </v-card>
+    </v-form>
   </v-dialog>
 </template>
 
@@ -194,14 +172,16 @@ export default {
       }
     },
     deleteFlight() {
-      this.initialGuests.forEach(guestId => {
-        this.$store.dispatch("guests/patch", {
-          id: guestId,
-          flightId: arrayRemove(this.id)
+      if (confirm("Are you sure you want to delete this item?")) {
+        this.initialGuests.forEach(guestId => {
+          this.$store.dispatch("guests/patch", {
+            id: guestId,
+            flightId: arrayRemove(this.id)
+          });
         });
-      });
-      this.$store.dispatch("flights/delete", this.id);
-      this.dialog = false;
+        this.$store.dispatch("flights/delete", this.id);
+        this.dialog = false;
+      }
     }
   },
   computed: {

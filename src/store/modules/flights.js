@@ -12,15 +12,8 @@ const flights = {
   // you can also add state/getters/mutations/actions
   state: {},
   getters: {
-    arrivals: state => {
-      return Object.values(state.data)
-        .filter(flight => flight.arrival == true)
-        .sort((a, b) => a.flightTimestamp - b.flightTimestamp);
-    },
-    departures: state => {
-      return Object.values(state.data)
-        .filter(flight => flight.arrival == false)
-        .sort((a, b) => a.flightTimestamp - b.flightTimestamp);
+    all: state => {
+      return Object.values(state.data);
     },
     flightGuests: (state, getters, rootState) => id => {
       return state.data[id].guests.map(guest => {

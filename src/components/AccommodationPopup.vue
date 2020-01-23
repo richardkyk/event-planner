@@ -100,10 +100,10 @@
           </v-row>
         </v-card-text>
         <v-card-actions>
-          <v-btn class="text-none" color="error" @click="deleteAccom" v-if="id">Delete</v-btn>
+          <v-btn color="error" @click="deleteAccom" v-if="id">Delete</v-btn>
           <v-spacer></v-spacer>
-          <v-btn class="text-none" @click.stop="dialog = false">Close</v-btn>
-          <v-btn class="text-none" color="primary" @click="submit">Submit</v-btn>
+          <v-btn @click.stop="dialog = false">Close</v-btn>
+          <v-btn color="primary" @click="submit">Submit</v-btn>
         </v-card-actions>
       </v-form>
     </v-card>

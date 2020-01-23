@@ -1,28 +1,20 @@
 <template>
-  <v-container fluid class="my-5">
+  <v-container class="my-10">
     <v-data-table
       :headers="headers"
       :search="search"
       :items="sortedGuests"
       :custom-filter="customFilter"
       sort-by="name"
-      class="elevation-2"
+      class="elevation-4"
       ref="dataTable"
     >
       <template v-slot:item.accom="{ item }">{{ accomStatus(item)}}</template>
       <template v-slot:item.flight="{ item }">{{ flightStatus(item) }}</template>
+      <template v-slot:item.desc="{ item }">{{ tableDesc(item.tableNum) }}</template>
       <template v-slot:item.rsvp="{ item }">
-        <v-chip @click="rsvp(item)" :color="getColor(item.rsvp)" dark>{{ item.rsvp }}</v-chip>
+        <v-chip @click="rsvp(item)" :color="getColor(item.rsvp)" dark>{{ toTitleCase(item.rsvp) }}</v-chip>
       </template>
-
-      <!-- <template v-slot:item.rsvp="props">
-        <v-edit-dialog :return-value.sync="props.item.rsvp">
-          {{ props.item.rsvp }}
-          <template v-slot:input>
-            <v-text-field v-model="props.item.rsvp" label="Edit" single-line counter></v-text-field>
-          </template>
-        </v-edit-dialog>
-      </template>-->
 
       <template v-slot:top>
         <v-toolbar flat color="white">
@@ -61,6 +53,7 @@ export default {
       headers: [
         { text: "Name", value: "name" },
         { text: "Table", value: "tableNum" },
+        { text: "Description", value: "desc" },
         { text: "Dietary", value: "dietary" },
         { text: "Flight", value: "flight" },
         { text: "Accommodation", value: "accom" },
@@ -81,10 +74,11 @@ export default {
         data.push({
           Name: guest.name,
           "Table Number": guest.tableNum,
+          Description: this.tableDesc(guest.tableNum),
           "Dietary Selection": guest.dietary,
           "Accommodation Status": guest.accom ? this.accomStatus(guest) : "",
           "Flight Status": guest.flight ? this.flightStatus(guest) : "",
-          RSVP: guest.rsvp
+          RSVP: this.toTitleCase(guest.rsvp)
         });
       });
       return data;
@@ -102,6 +96,7 @@ export default {
       const searchObject = (({ name, tableNum, dietary, rsvp }) => ({
         name,
         table: tableNum,
+        desc: this.tableDesc(tableNum),
         dietary,
         flight: this.flightStatus(item),
         accom: this.accomStatus(item),
@@ -157,6 +152,9 @@ export default {
           return "red";
       }
     },
+    toTitleCase(val) {
+      return val.charAt(0).toUpperCase() + val.slice(1);
+    },
     flightStatus(guest) {
       return guest.flight
         ? guest.flightId.length > 0
@@ -178,6 +176,12 @@ export default {
       const payload = { id: guest.id, rsvp: newRsvp };
       this.$store.dispatch("guests/patch", payload);
     },
+    tableDesc(tableNum) {
+      const tables = this.$store.getters["tables/sortedTables"];
+      return tables
+        .filter(table => table.tableNum == tableNum)
+        .map(table => table.desc)[0];
+    },
 
     download() {
       const guestWS = XLSX.utils.json_to_sheet(this.exportData);
@@ -185,8 +189,8 @@ export default {
 
       XLSX.utils.book_append_sheet(wb, guestWS);
 
-      const date = moment().format("DD-MM-YYYY HH:mm");
-      const name = `guests ${date}.xls`;
+      const date = moment().format("DD-MM-YYYY HH_mm");
+      const name = `Guests ${date}.xlsx`;
       XLSX.writeFile(wb, name);
     }
   }
