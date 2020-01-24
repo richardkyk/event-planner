@@ -1,6 +1,6 @@
 <template>
   <div class="tables">
-    <v-container>
+    <v-container fluid>
       <v-row ml-2>
         <v-col sm="12" md="6" lg="4" xl="3">
           <v-btn @click="addTable()" small text color="grey">
@@ -10,7 +10,14 @@
         </v-col>
       </v-row>
       <v-row wrap>
-        <v-col sm="12" md="6" lg="4" xl="3" v-for="table in sortedTables" :key="table.id">
+        <v-col
+          sm="12"
+          md="4"
+          lg="3"
+          class="xl5-custom"
+          v-for="table in sortedTables"
+          :key="table.id"
+        >
           <TableLayout v-bind:table="table" />
         </v-col>
       </v-row>
@@ -48,3 +55,14 @@ export default {
   }
 };
 </script>
+
+
+<style lang="stylus" scoped>
+@media (min-width: 1904px) {
+  .xl5-custom {
+    width: 20%;
+    max-width: 20%;
+    flex-basis: 20%;
+  }
+}
+</style>

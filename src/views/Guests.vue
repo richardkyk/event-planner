@@ -9,11 +9,17 @@
       class="elevation-4"
       ref="dataTable"
     >
-      <template v-slot:item.accom="{ item }">{{ accomStatus(item)}}</template>
-      <template v-slot:item.flight="{ item }">{{ flightStatus(item) }}</template>
-      <template v-slot:item.desc="{ item }">{{ tableDesc(item.tableNum) }}</template>
+      <template v-slot:item.accom="{ item }">{{ accomStatus(item) }}</template>
+      <template v-slot:item.flight="{ item }">{{
+        flightStatus(item)
+      }}</template>
+      <template v-slot:item.desc="{ item }">{{
+        tableDesc(item.tableNum)
+      }}</template>
       <template v-slot:item.rsvp="{ item }">
-        <v-chip @click="rsvp(item)" :color="getColor(item.rsvp)" dark>{{ toTitleCase(item.rsvp) }}</v-chip>
+        <v-chip @click="rsvp(item)" :color="getColor(item.rsvp)" dark>{{
+          toTitleCase(item.rsvp)
+        }}</v-chip>
       </template>
 
       <template v-slot:top>
@@ -28,8 +34,19 @@
                 hide-details
               ></v-text-field>
             </v-col>
-            <v-col cols="12" md="8" lg="9" :style="{ 'text-align': 'end', 'padding-top': '5px' }">
-              <v-btn class="btn-fix" small text color="primary" @click="download">
+            <v-col
+              cols="12"
+              md="8"
+              lg="9"
+              :style="{ 'text-align': 'end', 'padding-top': '5px' }"
+            >
+              <v-btn
+                class="btn-fix"
+                small
+                text
+                color="primary"
+                @click="download"
+              >
                 <v-icon left small>cloud_download</v-icon>
                 <span class="caption">Export Data</span>
               </v-btn>
@@ -145,7 +162,7 @@ export default {
         case "unsent":
           return "orange";
         case "sent":
-          return "teal";
+          return "blue";
         case "accepted":
           return "green";
         case "declined":
@@ -196,4 +213,3 @@ export default {
   }
 };
 </script>
-

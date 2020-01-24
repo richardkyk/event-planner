@@ -1,27 +1,26 @@
 <template>
   <div class="table">
-    <v-card flat class="mx-3 mb-3" elevation="5">
+    <v-card flat elevation="5">
       <!-- This is the tool bar -->
       <v-toolbar color="indigo">
-        <v-row px-12 no-gutters>
-          <v-col cols="auto" class="pl-2 pr-4">
-            <span class="white--text font-weight-thin display-2">{{ table.tableNum }}</span>
+        <v-row no-gutters justify="space-between">
+          <v-col cols="auto" align-self="center" class="text-center mr-1">
+            <span class="display-1 white--text font-weight-thin">{{ table.tableNum }}</span>
           </v-col>
-          <v-col cols="7" align-self="center">
-            <v-toolbar-title class="text-xs white--text font-weight-thin">{{ table.desc }}</v-toolbar-title>
+          <v-col cols="9" align-self="center">
+            <v-toolbar-title class="subheading white--text font-weight-thin">{{ table.desc }}</v-toolbar-title>
           </v-col>
-          <v-spacer></v-spacer>
-          <v-col cols="2" align-self="center">
-            <v-btn icon>
-              <v-icon @click.stop="editTable(table)" color="white">edit</v-icon>
-            </v-btn>
+          <v-col cols="1" align-self="center">
+            <!-- <v-btn icon> -->
+            <v-icon @click.stop="editTable(table)" color="white">edit</v-icon>
+            <!-- </v-btn> -->
           </v-col>
         </v-row>
       </v-toolbar>
 
       <!-- This is the textfield for the guest's name -->
       <v-row no-gutters>
-        <v-col xs12>
+        <v-col cols="12">
           <v-text-field
             class="mx-5"
             label="Guest's name"
@@ -41,17 +40,17 @@
                   <v-col cols="1" class="text-center mr-2">
                     <v-list-item-title>{{ index + 1 }}</v-list-item-title>
                   </v-col>
-                  <v-col>
-                    <v-list-item-title>{{ guest.name }}</v-list-item-title>
+                  <v-col cols="8">
+                    <v-list-item-title class="text-truncate">{{ guest.name }}</v-list-item-title>
 
                     <v-list-item-subtitle>{{ guest.dietary }}</v-list-item-subtitle>
                   </v-col>
                   <v-spacer></v-spacer>
                   <v-col v-if="guest.flight" cols="1">
-                    <v-icon>flight</v-icon>
+                    <v-icon size="20">flight</v-icon>
                   </v-col>
                   <v-col v-if="guest.accom" cols="1">
-                    <v-icon>hotel</v-icon>
+                    <v-icon size="20">hotel</v-icon>
                   </v-col>
                 </v-row>
               </v-list-item-content>
@@ -258,3 +257,10 @@ export default {
 }
 </style>
 
+<style>
+.v-application--is-ltr .v-list-item__action:last-of-type:not(:only-child),
+.v-application--is-ltr .v-list-item__avatar:last-of-type:not(:only-child),
+.v-application--is-ltr .v-list-item__icon:last-of-type:not(:only-child) {
+  margin-left: 0px !important;
+}
+</style>

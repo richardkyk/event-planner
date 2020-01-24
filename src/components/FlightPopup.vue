@@ -4,7 +4,7 @@
       <v-card>
         <v-card-text>
           <v-row>
-            <v-col cols="6">
+            <v-col cols="4">
               <v-text-field
                 :rules="inputRules"
                 v-model="flightNum"
@@ -12,7 +12,15 @@
                 prepend-icon="local_airport"
               ></v-text-field>
             </v-col>
-            <v-col cols="6">
+            <v-col cols="4">
+              <v-text-field
+                :rules="inputRules"
+                v-model="airport"
+                label="Airport"
+                prepend-icon="map"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="4">
               <v-radio-group row v-model="arrival">
                 <v-radio color="primary" label="Arrival" :value="true"></v-radio>
                 <v-radio color="primary" label="Departure" :value="false"></v-radio>
@@ -97,6 +105,7 @@ export default {
       flightNum: "",
       flightDate: null,
       flightTime: null,
+      airport: "",
       arrival: true,
       showClock: false,
       initialGuests: [],
@@ -111,8 +120,17 @@ export default {
       this.guests = [...this.guests];
     },
     open(data) {
-      const { flightNum, arrival, flightDate, flightTime, id, guests } = data;
+      const {
+        flightNum,
+        arrival,
+        flightDate,
+        flightTime,
+        id,
+        guests,
+        airport
+      } = data;
       this.dialog = true;
+      this.airport = airport;
       this.flightNum = flightNum;
       this.arrival = arrival;
       this.flightDate = flightDate
@@ -149,6 +167,7 @@ export default {
           : this.$store.getters["flights/dbRef"].doc().id;
         const data = {
           id: flightId,
+          airport: this.airport,
           flightNum: this.flightNum,
           flightTime: moment(this.flightTime, "HH:mm").format("h:mm A"),
           flightDate: moment(this.flightDate).format("Do MMM YYYY"),

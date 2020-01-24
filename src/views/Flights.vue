@@ -66,6 +66,7 @@ export default {
         { text: "Time", value: "flightTime", sortable: false },
         { text: "Type", value: "type" },
         { text: "Flight Number", value: "flightNum" },
+        { text: "Airport", value: "airport" },
         { text: "Passengers", value: "passengers", sortable: false },
         { text: "Actions", value: "action", sortable: false }
       ]
@@ -135,7 +136,7 @@ export default {
         case true:
           return "blue";
         case false:
-          return "teal";
+          return "green";
       }
     },
     flightType(arrival) {
@@ -150,12 +151,13 @@ export default {
         flightTime: null,
         flightDate: null,
         guests: [],
-        arrival: true
+        arrival: true,
+        airport: ""
       };
       this.$refs.flightPopup.open(data);
     },
     formattedDate(unix) {
-      return moment.unix(unix).format("DD-MM-YYYY");
+      return moment.unix(unix).format("DD MMM YYYY");
     },
     download() {
       const flightWS = XLSX.utils.json_to_sheet(this.exportData);
@@ -188,6 +190,7 @@ export default {
           Time: flight.flightTime,
           Type: this.flightType(flight.arrival),
           "Flight Number": flight.flightNum,
+          Aiport: flight.aiport,
           Passengers: this.flightGuests(flight.id)
         });
       });
