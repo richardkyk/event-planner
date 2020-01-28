@@ -4,10 +4,10 @@
       <!-- This is the tool bar -->
       <v-toolbar color="indigo">
         <v-row no-gutters justify="space-between">
-          <v-col cols="auto" align-self="center" class="text-center mr-1">
+          <v-col cols="2" align-self="center" class="text-center mr-1">
             <span class="display-1 white--text font-weight-thin">{{ table.tableNum }}</span>
           </v-col>
-          <v-col cols="9" align-self="center">
+          <v-col cols="8" align-self="center">
             <v-toolbar-title class="subheading white--text font-weight-thin">{{ table.desc }}</v-toolbar-title>
           </v-col>
           <v-col cols="1" align-self="center">

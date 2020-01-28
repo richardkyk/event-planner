@@ -2,7 +2,7 @@
   <div class="tables">
     <v-container fluid>
       <v-row ml-2>
-        <v-col sm="12" md="6" lg="4" xl="3">
+        <v-col cols="12" sm="6" md="4" lg="3" xl="2">
           <v-btn @click="addTable()" small text color="grey">
             <v-icon left small>add</v-icon>
             <span>Add Table</span>
@@ -11,7 +11,8 @@
       </v-row>
       <v-row wrap>
         <v-col
-          sm="12"
+          cols="12"
+          sm="6"
           md="4"
           lg="3"
           class="xl5-custom"
