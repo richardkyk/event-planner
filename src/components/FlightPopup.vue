@@ -22,15 +22,23 @@
             </v-col>
             <v-col cols="4">
               <v-radio-group row v-model="arrival">
-                <v-radio color="primary" label="Arrival" :value="true"></v-radio>
-                <v-radio color="primary" label="Departure" :value="false"></v-radio>
+                <v-radio
+                  color="primary"
+                  label="Arrival"
+                  :value="true"
+                ></v-radio>
+                <v-radio
+                  color="primary"
+                  label="Departure"
+                  :value="false"
+                ></v-radio>
               </v-radio-group>
             </v-col>
 
             <v-col cols="6">
               <!-- This is the date picker -->
               <v-menu :close-on-content-click="false">
-                <template v-slot:activator="{on}">
+                <template v-slot:activator="{ on }">
                   <v-text-field
                     readonly
                     :rules="dateRules"
@@ -46,7 +54,7 @@
             <v-col cols="6">
               <!-- This is the time picker -->
               <v-menu v-model="showClock" :close-on-content-click="false">
-                <template v-slot:activator="{on}">
+                <template v-slot:activator="{ on }">
                   <v-text-field
                     readonly
                     :rules="dateRules"
@@ -56,7 +64,10 @@
                     prepend-icon="access_time"
                   ></v-text-field>
                 </template>
-                <v-time-picker v-if="showClock" v-model="flightTime"></v-time-picker>
+                <v-time-picker
+                  v-if="showClock"
+                  v-model="flightTime"
+                ></v-time-picker>
               </v-menu>
             </v-col>
 
@@ -74,8 +85,14 @@
                 hide-selected
               >
                 <template v-slot:selection="data">
-                  <v-chip small :input-value="data.selected" close @click:close="remove(data.item)">
-                    <strong>{{ data.item.name }}</strong>&nbsp;
+                  <v-chip
+                    small
+                    :input-value="data.selected"
+                    close
+                    @click:close="remove(data.item)"
+                  >
+                    <strong>{{ data.item.name }}</strong
+                    >&nbsp;
                   </v-chip>
                 </template>
               </v-combobox>
@@ -84,7 +101,7 @@
           <v-card-actions>
             <v-btn color="error" @click="deleteFlight" v-if="id">Delete</v-btn>
             <v-spacer></v-spacer>
-            <v-btn @click.stop="dialog = false">Close</v-btn>
+            <v-btn @click.stop="close">Close</v-btn>
             <v-btn color="primary" @click="submit">Submit</v-btn>
           </v-card-actions>
         </v-card-text>
@@ -115,6 +132,23 @@ export default {
     };
   },
   methods: {
+    close() {
+      this.dialog = false;
+      setTimeout(() => {
+        this.$refs.form.resetValidation();
+        Object.assign(this, {
+          id: null,
+          flightNum: "",
+          flightDate: null,
+          flightTime: null,
+          airport: "",
+          arrival: true,
+          showClock: false,
+          initialGuests: [],
+          guests: []
+        });
+      }, 300);
+    },
     remove(item) {
       this.guests.splice(this.guests.indexOf(item), 1);
       this.guests = [...this.guests];
@@ -187,7 +221,7 @@ export default {
           });
         });
 
-        this.dialog = false;
+        this.close();
       }
     },
     deleteFlight() {
@@ -199,7 +233,7 @@ export default {
           });
         });
         this.$store.dispatch("flights/delete", this.id);
-        this.dialog = false;
+        this.close();
       }
     }
   },
