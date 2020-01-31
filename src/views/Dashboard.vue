@@ -150,11 +150,15 @@ export default {
       return { count: tables.length };
     },
     flights() {
-      const arrivals = this.$store.getters["flights/arrivals"]
-        ? this.$store.getters["flights/arrivals"]
+      const arrivals = this.$store.getters["flights/all"]
+        ? this.$store.getters["flights/all"].filter(
+            flight => flight.arrival == true
+          )
         : [];
-      const departures = this.$store.getters["flights/departures"]
-        ? this.$store.getters["flights/departures"]
+      const departures = this.$store.getters["flights/all"]
+        ? this.$store.getters["flights/all"].filter(
+            flight => flight.arrival == false
+          )
         : [];
       return {
         count: arrivals.length + departures.length,
