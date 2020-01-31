@@ -9,8 +9,12 @@
       class="elevation-4"
       ref="dataTable"
     >
-      <template v-slot:item.flightTimestamp="{ item }">{{ formattedDate(item.flightTimestamp) }}</template>
-      <template v-slot:item.passengers="{ item }">{{ flightGuests(item.id) }}</template>
+      <template v-slot:item.flightTimestamp="{ item }">{{
+        formattedDate(item.flightTimestamp)
+      }}</template>
+      <template v-slot:item.passengers="{ item }">{{
+        flightGuests(item.id)
+      }}</template>
       <template v-slot:item.action="{ item }">
         <v-icon small class="mr-2" @click="editItem(item)">edit</v-icon>
       </template>
@@ -18,7 +22,9 @@
       <!-- <template v-slot:item.type="{ item }">{{ flightType(item.arrival) }}</template> -->
 
       <template v-slot:item.type="{ item }">
-        <v-chip :color="getColor(item.arrival)" dark>{{ flightType(item.arrival) }}</v-chip>
+        <v-chip :color="getColor(item.arrival)" dark>{{
+          flightType(item.arrival)
+        }}</v-chip>
       </template>
 
       <template v-slot:top>
@@ -33,8 +39,19 @@
                 hide-details
               ></v-text-field>
             </v-col>
-            <v-col cols="12" md="8" lg="9" :style="{ 'text-align': 'end', 'padding-top': '5px' }">
-              <v-btn class="btn-fix" small text color="primary" @click="download">
+            <v-col
+              cols="12"
+              md="8"
+              lg="9"
+              :style="{ 'text-align': 'end', 'padding-top': '5px' }"
+            >
+              <v-btn
+                class="btn-fix"
+                small
+                text
+                color="primary"
+                @click="download"
+              >
                 <v-icon left small>cloud_download</v-icon>
                 <span class="caption">Export Data</span>
               </v-btn>
@@ -180,9 +197,7 @@ export default {
       return this.$store.getters["flights/all"];
     },
     exportData() {
-      const flights = this.$store.getters["flights/all"]
-        ? this.$store.getters["flights/all"]
-        : [];
+      const flights = this.$refs.dataTable.$children[0].computedItems;
       const data = [];
       flights.forEach(flight => {
         data.push({
@@ -190,7 +205,7 @@ export default {
           Time: flight.flightTime,
           Type: this.flightType(flight.arrival),
           "Flight Number": flight.flightNum,
-          Aiport: flight.aiport,
+          Airport: flight.airport,
           Passengers: this.flightGuests(flight.id)
         });
       });

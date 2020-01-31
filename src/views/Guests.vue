@@ -86,6 +86,7 @@ export default {
       const guests = this.$store.getters["guests/allGuests"]
         ? this.$store.getters["guests/allGuests"]
         : [];
+
       const data = [];
       guests.forEach(guest => {
         data.push({
