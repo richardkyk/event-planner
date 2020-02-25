@@ -5,16 +5,16 @@
       @mousedown="mouseDown"
       :x="x"
       :y="y"
-      width="450"
-      height="150"
-      transform="translate(-225,-75)"
+      width="400"
+      height="120"
+      transform="translate(-200,-60)"
       fill="#3f51b5"
     />
-    <circle v-else @mousedown="mouseDown" :cx="x" :cy="y" r="85" fill="#3f51b5" />
+    <circle v-else @mousedown="mouseDown" :cx="x" :cy="y" r="65" fill="#3f51b5" />
     <text
       class="svgText"
       :x="x"
-      :y="y-30"
+      :y="y-25"
       font-size="30px"
       text-anchor="middle"
       fill="white"
@@ -23,7 +23,7 @@
       class="svgText"
       :x="x"
       :y="y"
-      font-size="15px"
+      font-size="10px"
       text-anchor="middle"
       fill="white"
     >{{table.desc}}</text>
@@ -31,7 +31,7 @@
       class="svgText"
       :x="x"
       :y="y+30"
-      font-size="15px"
+      font-size="10px"
       text-anchor="middle"
       fill="white"
     >Guests: {{table.guests.length}}</text>
