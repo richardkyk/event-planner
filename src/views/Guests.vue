@@ -17,7 +17,7 @@
       </template>
       <template v-slot:item.desc="{ item }">
         {{
-        tableDesc(item.tableNum)
+        tableDesc(item.tableId)
         }}
       </template>
       <template v-slot:item.rsvp="{ item }">
@@ -65,7 +65,7 @@ export default {
       headers: [
         { text: "Name", value: "name" },
         { text: "Table", value: "tableNum" },
-        { text: "Description", value: "desc" },
+        { text: "Description", value: "desc", sortable: false },
         { text: "Dietary", value: "dietary" },
         { text: "Flight", value: "flight" },
         { text: "Accommodation", value: "accom" },
@@ -87,7 +87,7 @@ export default {
         data.push({
           Name: guest.name,
           "Table Number": guest.tableNum,
-          Description: this.tableDesc(guest.tableNum),
+          Description: this.tableDesc(guest.tableId),
           "Dietary Selection": guest.dietary,
           "Accommodation Status": guest.accom ? this.accomStatus(guest) : "",
           "Flight Status": guest.flight ? this.flightStatus(guest) : "",
@@ -106,10 +106,10 @@ export default {
       if (value == null || search == null) {
         return false;
       }
-      const searchObject = (({ name, tableNum, dietary, rsvp }) => ({
+      const searchObject = (({ name, tableNum, dietary, rsvp, tableId }) => ({
         name,
         table: tableNum,
-        desc: this.tableDesc(tableNum),
+        desc: this.tableDesc(tableId),
         dietary,
         flight: this.flightStatus(item),
         accom: this.accomStatus(item),
@@ -189,11 +189,17 @@ export default {
       const payload = { id: guest.id, rsvp: newRsvp };
       this.$store.dispatch("guests/patch", payload);
     },
-    tableDesc(tableNum) {
+    tableDesc(tableId) {
       const tables = this.$store.getters["tables/sortedTables"];
-      return tables
-        .filter(table => table.tableNum == tableNum)
-        .map(table => table.desc)[0];
+      // console.log(
+      //   tables.filter(table => table.id == tableId).map(table => table.desc)[0]
+      // );
+
+      return (
+        tables
+          .filter(table => table.id == tableId)
+          .map(table => table.desc)[0] || ""
+      );
     },
 
     download() {

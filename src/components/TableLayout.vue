@@ -4,12 +4,7 @@
       <!-- This is the tool bar -->
       <v-toolbar color="indigo">
         <v-row no-gutters justify="space-between">
-          <v-col
-            @click.stop="editTableNum(table)"
-            cols="2"
-            align-self="center"
-            class="text-center mr-1"
-          >
+          <v-col cols="2" align-self="center" class="text-center mr-1">
             <span class="display-1 white--text font-weight-thin">{{ table.tableNum }}</span>
           </v-col>
           <v-col cols="8" align-self="center">
@@ -96,7 +91,7 @@
                 </v-col>
                 <!-- Edit guest name -->
                 <v-col text-xs-center>
-                  <v-icon @click.stop="editTable(guest)">edit</v-icon>
+                  <v-icon @click.stop="editGuest(guest)">edit</v-icon>
                 </v-col>
                 <!-- Delete guest -->
                 <v-col text-xs-center>
@@ -109,18 +104,18 @@
       </v-list>
     </v-card>
     <TablePopup ref="tablePopup" />
-    <TableNumPopup ref="tableNumPopup" />
+    <GuestPopup ref="guestPopup" />
   </div>
 </template>
 
 <script>
 import draggable from "vuedraggable";
 import TablePopup from "@/components/TablePopup";
-import TableNumPopup from "@/components/TableNumPopup";
+import GuestPopup from "@/components/GuestPopup";
 import { arrayUnion, arrayRemove } from "vuex-easy-firestore";
 
 export default {
-  components: { TablePopup, draggable, TableNumPopup },
+  components: { TablePopup, draggable, GuestPopup },
   props: ["table"],
   data() {
     return {
@@ -163,9 +158,10 @@ export default {
     editTable(data) {
       this.$refs.tablePopup.open(data);
     },
-    editTableNum(data) {
-      this.$refs.tableNumPopup.open(data);
+    editGuest(data) {
+      this.$refs.guestPopup.open(data);
     },
+
     addGuest() {
       const id = this.$store.getters["guests/dbRef"].doc().id;
       const tableId = this.table.id;
