@@ -4,7 +4,12 @@
       <!-- This is the tool bar -->
       <v-toolbar color="indigo">
         <v-row no-gutters justify="space-between">
-          <v-col cols="2" align-self="center" class="text-center mr-1">
+          <v-col
+            @click.stop="editTableNum(table)"
+            cols="2"
+            align-self="center"
+            class="text-center mr-1"
+          >
             <span class="display-1 white--text font-weight-thin">{{ table.tableNum }}</span>
           </v-col>
           <v-col cols="8" align-self="center">
@@ -104,16 +109,18 @@
       </v-list>
     </v-card>
     <TablePopup ref="tablePopup" />
+    <TableNumPopup ref="tableNumPopup" />
   </div>
 </template>
 
 <script>
 import draggable from "vuedraggable";
 import TablePopup from "@/components/TablePopup";
+import TableNumPopup from "@/components/TableNumPopup";
 import { arrayUnion, arrayRemove } from "vuex-easy-firestore";
 
 export default {
-  components: { TablePopup, draggable },
+  components: { TablePopup, draggable, TableNumPopup },
   props: ["table"],
   data() {
     return {
@@ -155,6 +162,9 @@ export default {
   methods: {
     editTable(data) {
       this.$refs.tablePopup.open(data);
+    },
+    editTableNum(data) {
+      this.$refs.tableNumPopup.open(data);
     },
     addGuest() {
       const id = this.$store.getters["guests/dbRef"].doc().id;
