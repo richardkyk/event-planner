@@ -20,12 +20,32 @@
         tableDesc(item.tableId)
         }}
       </template>
+
+      <template v-slot:item.gift="props">
+        <v-edit-dialog :return-value.sync="props.item.gift" @save="save(props.item)">
+          {{ props.item.gift }}
+          <template v-slot:input>
+            <v-text-field v-model="props.item.gift" label="Edit" single-line counter></v-text-field>
+          </template>
+        </v-edit-dialog>
+      </template>
+
       <template v-slot:item.rsvp="{ item }">
         <v-chip @click="rsvp(item)" :color="getColor(item.rsvp)" dark>
           {{
           toTitleCase(item.rsvp)
           }}
         </v-chip>
+      </template>
+      <template v-slot:item.checkin="{ item }">
+        <v-chip v-if="item.checkin" @click="checkin(item)" color="green" dark>Checked In</v-chip>
+        <v-chip v-else @click="checkin(item)" color="orange" dark>Check In</v-chip>
+      </template>
+
+      <template v-slot:item.time="{ item }">
+        {{
+        displayTime(item.time)
+        }}
       </template>
 
       <template v-slot:top>
@@ -69,7 +89,10 @@ export default {
         { text: "Dietary", value: "dietary" },
         { text: "Flight", value: "flight" },
         { text: "Accommodation", value: "accom" },
-        { text: "RSVP", value: "rsvp" }
+        { text: "RSVP", value: "rsvp" },
+        { text: "Gift", value: "gift" },
+        { text: "Time", value: "time" },
+        { text: "Check in", value: "checkin" }
       ]
     };
   },
@@ -91,7 +114,10 @@ export default {
           "Dietary Selection": guest.dietary,
           "Accommodation Status": guest.accom ? this.accomStatus(guest) : "",
           "Flight Status": guest.flight ? this.flightStatus(guest) : "",
-          RSVP: this.toTitleCase(guest.rsvp)
+          RSVP: this.toTitleCase(guest.rsvp),
+          gift: guest.gift,
+          time: this.displayTime(guest.time),
+          "Checked In": guest.checkin
         });
       });
       return data;
@@ -106,14 +132,24 @@ export default {
       if (value == null || search == null) {
         return false;
       }
-      const searchObject = (({ name, tableNum, dietary, rsvp, tableId }) => ({
+      const searchObject = (({
+        name,
+        tableNum,
+        dietary,
+        rsvp,
+        gift,
+        tableId,
+        checkin
+      }) => ({
         name,
         table: tableNum,
         desc: this.tableDesc(tableId),
         dietary,
         flight: this.flightStatus(item),
         accom: this.accomStatus(item),
-        rsvp
+        rsvp,
+        gift,
+        checkin: checkin || false
       }))(item);
       if (search.includes("|")) {
         // This will search for either of the items
@@ -182,6 +218,9 @@ export default {
           : "Unassigned"
         : "";
     },
+    displayTime(unix) {
+      return unix == "" ? "" : moment.unix(unix).format("h:mm A");
+    },
     rsvp(guest) {
       const oldRsvpIndex = this.rsvpValues.indexOf(guest.rsvp);
       const newRsvpIndex = (oldRsvpIndex + 1) % this.rsvpValues.length;
@@ -189,17 +228,25 @@ export default {
       const payload = { id: guest.id, rsvp: newRsvp };
       this.$store.dispatch("guests/patch", payload);
     },
+    checkin(guest) {
+      const checkin = guest.checkin || false;
+      const payload = { id: guest.id, checkin: !checkin, time: "" };
+      if (!checkin) {
+        payload.time = moment().unix();
+      }
+      this.$store.dispatch("guests/patch", payload);
+    },
     tableDesc(tableId) {
       const tables = this.$store.getters["tables/sortedTables"];
-      // console.log(
-      //   tables.filter(table => table.id == tableId).map(table => table.desc)[0]
-      // );
 
-      return (
-        tables
-          .filter(table => table.id == tableId)
-          .map(table => table.desc)[0] || ""
-      );
+      return tables
+        .filter(table => table.id == tableId)
+        .map(table => table.desc)[0];
+    },
+
+    save(guest) {
+      const payload = { id: guest.id, gift: guest.gift };
+      this.$store.dispatch("guests/patch", payload);
     },
 
     download() {

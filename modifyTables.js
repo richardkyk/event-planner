@@ -78,4 +78,36 @@ async function changeTableNum(id, tableNum) {
   await signOut();
 }
 
-changeTableNum("6sVhYJ4JVQ6NDvPFAkss", 16);
+// changeTableNum("6sVhYJ4JVQ6NDvPFAkss", 16);
+
+async function addProperty() {
+  await signIn();
+  const updatePromises = [];
+
+  const guests = await firebase
+    .firestore()
+    .collection("guests")
+    .get();
+
+  guests.forEach(doc => {
+    const data = { ...doc.data() };
+    if (data.created_by == "8JdE3gSVNhXsICvdVIZb0JGEp0K3") {
+      updatePromises.push(
+        firebase
+          .firestore()
+          .collection("guests")
+          .doc(data.id)
+          .set(
+            {
+              gift: ""
+            },
+            { merge: true }
+          )
+      );
+    }
+  });
+  await Promise.all(updatePromises);
+  await signOut();
+}
+
+addProperty();
