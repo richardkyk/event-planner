@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard">
-    <v-container class="my-5">
+    <v-container class="my-5" fluid>
       <v-layout row wrap>
         <v-flex xs12 md6 lg3>
           <DashboardLayout>
