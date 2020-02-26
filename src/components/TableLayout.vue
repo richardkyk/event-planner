@@ -166,17 +166,19 @@ export default {
       const id = this.$store.getters["guests/dbRef"].doc().id;
       const tableId = this.table.id;
       const guestData = {
-        id,
-        tableNum: this.table.tableNum,
-        tableId,
-        name: this.name,
-        flight: false,
         accom: false,
-        rsvp: "unsent",
-        flightId: [],
         accomId: [],
+        checkin: false,
         dietary: "",
-        checkin: false
+        flight: false,
+        flightId: [],
+        gift: "",
+        id,
+        name: this.name,
+        rsvp: "unsent",
+        tableId,
+        tableNum: this.table.tableNum,
+        time: ""
       };
       this.$store.dispatch("guests/set", guestData);
       this.$store.dispatch("tables/patch", {

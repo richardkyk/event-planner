@@ -99,7 +99,7 @@ async function addProperty() {
           .doc(data.id)
           .set(
             {
-              gift: ""
+              rsvp: "accepted"
             },
             { merge: true }
           )
