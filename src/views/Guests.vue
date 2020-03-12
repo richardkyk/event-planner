@@ -15,6 +15,11 @@
         flightStatus(item)
         }}
       </template>
+      <template v-slot:item.seatNum="{ item }">
+        {{
+        getSeatNumber(item)
+        }}
+      </template>
       <template v-slot:item.desc="{ item }">
         {{
         tableDesc(item.tableId)
@@ -85,6 +90,7 @@ export default {
       headers: [
         { text: "Name", value: "name" },
         { text: "Table", value: "tableNum" },
+        { text: "Seat", value: "seatNum", sortable: false },
         { text: "Description", value: "desc", sortable: false },
         { text: "Dietary", value: "dietary" },
         { text: "Flight", value: "flight" },
@@ -109,14 +115,15 @@ export default {
       guests.forEach(guest => {
         data.push({
           Name: guest.name,
-          "Table Number": guest.tableNum,
+          Table: guest.tableNum,
+          Seat: this.getSeatNumber(guest),
           Description: this.tableDesc(guest.tableId),
           "Dietary Selection": guest.dietary,
           "Accommodation Status": guest.accom ? this.accomStatus(guest) : "",
           "Flight Status": guest.flight ? this.flightStatus(guest) : "",
           RSVP: this.toTitleCase(guest.rsvp),
-          gift: guest.gift,
-          time: this.displayTime(guest.time),
+          Gift: guest.gift,
+          Time: this.displayTime(guest.time),
           "Checked In": guest.checkin
         });
       });
@@ -242,6 +249,13 @@ export default {
       return tables
         .filter(table => table.id == tableId)
         .map(table => table.desc)[0];
+    },
+    getSeatNumber(guest) {
+      const seatNum =
+        this.$store.getters["tables/tableGuests"](guest.tableId)
+          .map(guest => guest.id)
+          .indexOf(guest.id) + 1;
+      return seatNum;
     },
 
     save(guest) {

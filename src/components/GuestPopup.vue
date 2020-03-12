@@ -34,6 +34,7 @@ export default {
     },
     submit() {
       const payload = { id: this.data.id, name: this.value };
+      console.log(payload);
       this.$store.dispatch("guests/patch", payload);
       this.dialog = false;
     }

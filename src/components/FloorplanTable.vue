@@ -1,7 +1,7 @@
 <template>
   <svg>
     <rect
-      v-if="table.tableNum===0"
+      v-if="table.isBridalTable"
       @mousedown="mouseDown"
       :x="x"
       :y="y"
