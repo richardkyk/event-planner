@@ -13,9 +13,11 @@ const tables = {
   state: {},
   getters: {
     tableGuests: (state, getters, rootState) => id => {
-      return state.data[id].guests.map(guest => {
-        return rootState.guests.data[guest];
-      });
+      if (state.data[id]) {
+        return state.data[id].guests.map(guest => {
+          return rootState.guests.data[guest];
+        });
+      } else return [];
     },
     sortedTables: state => {
       return Object.values(state.data).sort((a, b) => a.tableNum - b.tableNum);
