@@ -33,7 +33,7 @@ export default {
       this.$nextTick(() => this.$refs.text.focus());
     },
     submit() {
-      const payload = { id: this.data.id, name: this.value };
+      const payload = { id: this.data.id, name: this.value.trim() };
       console.log(payload);
       this.$store.dispatch("guests/patch", payload);
       this.dialog = false;

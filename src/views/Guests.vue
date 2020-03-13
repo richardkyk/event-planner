@@ -5,6 +5,7 @@
       :search="search"
       :items="sortedGuests"
       :custom-filter="customFilter"
+      multi-sort
       sort-by="name"
       class="elevation-4"
       ref="dataTable"
@@ -90,8 +91,8 @@ export default {
       headers: [
         { text: "Name", value: "name" },
         { text: "Table", value: "tableNum" },
-        { text: "Seat", value: "seatNum", sortable: false },
-        { text: "Description", value: "desc", sortable: false },
+        { text: "Seat", value: "seatNum" },
+        { text: "Description", value: "desc" },
         { text: "Dietary", value: "dietary" },
         { text: "Flight", value: "flight" },
         { text: "Accommodation", value: "accom" },
@@ -104,7 +105,15 @@ export default {
   },
   computed: {
     sortedGuests() {
-      return this.$store.getters["guests/sortedGuests"](this.prop);
+      return this.$store.getters["guests/sortedGuests"](this.prop).map(
+        guest => {
+          return {
+            ...guest,
+            seatNum: this.getSeatNumber(guest),
+            desc: this.tableDesc(guest.tableId)
+          };
+        }
+      );
     },
     exportData() {
       const guests = this.$store.getters["guests/allGuests"]
@@ -114,7 +123,9 @@ export default {
       const data = [];
       guests.forEach(guest => {
         data.push({
-          Name: guest.name,
+          "Full Name": guest.name,
+          "First Name": this.getName(guest.name)[0],
+          Surname: this.getName(guest.name)[1],
           Table: guest.tableNum,
           Seat: this.getSeatNumber(guest),
           Description: this.tableDesc(guest.tableId),
@@ -261,6 +272,13 @@ export default {
     save(guest) {
       const payload = { id: guest.id, gift: guest.gift };
       this.$store.dispatch("guests/patch", payload);
+    },
+
+    getName(name) {
+      const nameArr = name.split(" ");
+      const surname = nameArr.pop();
+      const firstName = nameArr.join(" ");
+      return [firstName, surname];
     },
 
     download() {

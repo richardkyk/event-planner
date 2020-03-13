@@ -174,7 +174,7 @@ export default {
         flightId: [],
         gift: "",
         id,
-        name: this.name,
+        name: this.name.trim(),
         rsvp: "unsent",
         tableId,
         tableNum: this.table.tableNum,
