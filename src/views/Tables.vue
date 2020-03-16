@@ -49,7 +49,8 @@ export default {
         tableNum: newId,
         desc: "",
         guests: [],
-        coords: { x: 85, y: 85 }
+        coords: { x: 85, y: 85 },
+        isBridalTable: false
       };
       this.$store.dispatch("tables/set", data);
     }
