@@ -1,112 +1,90 @@
 <template>
-  <v-dialog persistent v-model="dialog" max-width="500">
-    <v-card>
-      <v-form ref="form">
-        <v-card-text class="px-4">
-          <v-row>
-            <!-- Description text field -->
-            <v-col cols="12">
-              <v-text-field
-                :rules="inputRules"
-                v-model="desc"
-                label="Description"
-                prepend-icon="hotel"
-              ></v-text-field>
-            </v-col>
+  <v-dialog persistent v-model="dialog" max-width="600">
+    <v-form ref="form">
+      <v-card class="pa-3">
+        <v-row>
+          <!-- Description text field -->
+          <v-col cols="12">
+            <v-text-field class="mx-3" :rules="inputRules" v-model="desc" label="Description"></v-text-field>
+          </v-col>
 
-            <!-- Address text field -->
-            <v-col cols="12">
-              <v-text-field
-                :rules="inputRules"
-                v-model="address"
-                label="Address"
-                prepend-icon="location_on"
-              ></v-text-field>
-            </v-col>
+          <!-- Address text field -->
+          <v-col cols="12">
+            <v-text-field class="mx-3" :rules="inputRules" v-model="address" label="Address"></v-text-field>
+          </v-col>
 
-            <!-- Suburb and postcode text field -->
-            <v-col cols="6">
-              <v-text-field
-                :rules="inputRules"
-                v-model="suburb"
-                label="Suburb"
-                prepend-icon="location_city"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="6">
-              <v-spacer></v-spacer>
-              <v-text-field
-                :rules="inputRules"
-                v-model="postCode"
-                label="Postcode"
-                prepend-icon="map"
-              ></v-text-field>
-            </v-col>
+          <!-- Suburb and postcode text field -->
+          <v-col cols="6">
+            <v-text-field class="mx-3" :rules="inputRules" v-model="suburb" label="Suburb"></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-spacer></v-spacer>
+            <v-text-field class="mx-3" :rules="inputRules" v-model="postCode" label="Postcode"></v-text-field>
+          </v-col>
 
-            <!-- This is the check-in date picker -->
-            <v-col cols="6">
-              <v-menu :close-on-content-click="false">
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                    readonly
-                    :rules="dateRules"
-                    :value="formattedDate(checkInDate)"
-                    v-on="on"
-                    label="Check-in Date"
-                    prepend-icon="date_range"
-                  ></v-text-field>
-                </template>
-                <v-date-picker v-model="checkInDate"></v-date-picker>
-              </v-menu>
-            </v-col>
+          <!-- This is the check-in date picker -->
+          <v-col cols="6">
+            <v-menu :close-on-content-click="false">
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  class="mx-3"
+                  readonly
+                  :rules="dateRules"
+                  :value="formattedDate(checkInDate)"
+                  v-on="on"
+                  label="Check-in Date"
+                ></v-text-field>
+              </template>
+              <v-date-picker v-model="checkInDate"></v-date-picker>
+            </v-menu>
+          </v-col>
 
-            <!-- This is the checkout date picker -->
-            <v-col cols="6">
-              <v-menu :close-on-content-click="false">
-                <template v-slot:activator="{on}">
-                  <v-text-field
-                    readonly
-                    :rules="dateRules"
-                    :value="formattedDate(checkOutDate)"
-                    v-on="on"
-                    label="Checkout Date"
-                    prepend-icon="date_range"
-                  ></v-text-field>
-                </template>
-                <v-date-picker v-model="checkOutDate"></v-date-picker>
-              </v-menu>
-            </v-col>
+          <!-- This is the checkout date picker -->
+          <v-col cols="6">
+            <v-menu :close-on-content-click="false">
+              <template v-slot:activator="{on}">
+                <v-text-field
+                  class="mx-3"
+                  readonly
+                  :rules="dateRules"
+                  :value="formattedDate(checkOutDate)"
+                  v-on="on"
+                  label="Checkout Date"
+                ></v-text-field>
+              </template>
+              <v-date-picker v-model="checkOutDate"></v-date-picker>
+            </v-menu>
+          </v-col>
 
-            <v-col cols="12">
-              <v-combobox
-                v-model="guests"
-                :items="allAccomGuests"
-                chips
-                multiple
-                item-text="name"
-                item-value="name"
-                label="Guests"
-                flat
-                prepend-icon="people"
-                hide-selected
-              >
-                <template v-slot:selection="data">
-                  <v-chip small :input-value="data.selected" close @click:close="remove(data.item)">
-                    <strong>{{ data.item.name }}</strong>&nbsp;
-                  </v-chip>
-                </template>
-              </v-combobox>
-            </v-col>
-          </v-row>
-        </v-card-text>
+          <v-col cols="12">
+            <v-combobox
+              class="mx-3"
+              v-model="guests"
+              :items="allAccomGuests"
+              chips
+              multiple
+              item-text="name"
+              item-value="name"
+              label="Guests"
+              flat
+              hide-selected
+            >
+              <template v-slot:selection="data">
+                <v-chip small :input-value="data.selected" close @click:close="remove(data.item)">
+                  <strong>{{ data.item.name }}</strong>&nbsp;
+                </v-chip>
+              </template>
+            </v-combobox>
+          </v-col>
+        </v-row>
         <v-card-actions>
           <v-btn color="error" @click="deleteAccom" v-if="id">Delete</v-btn>
           <v-spacer></v-spacer>
           <v-btn @click.stop="dialog = false">Close</v-btn>
           <v-btn color="primary" @click="submit">Submit</v-btn>
         </v-card-actions>
-      </v-form>
-    </v-card>
+      </v-card>
+    </v-form>
   </v-dialog>
 </template>
 

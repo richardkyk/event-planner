@@ -1,110 +1,86 @@
 <template>
-  <v-dialog persistent v-model="dialog" max-width="500">
+  <v-dialog persistent v-model="dialog" max-width="600">
     <v-form ref="form">
-      <v-card>
-        <v-card-text>
-          <v-row>
-            <v-col cols="4">
-              <v-text-field
-                :rules="inputRules"
-                v-model="flightNum"
-                label="Flight number"
-                prepend-icon="local_airport"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="4">
-              <v-text-field
-                :rules="inputRules"
-                v-model="airport"
-                label="Airport"
-                prepend-icon="map"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="4">
-              <v-radio-group row v-model="arrival">
-                <v-radio
-                  color="primary"
-                  label="Arrival"
-                  :value="true"
-                ></v-radio>
-                <v-radio
-                  color="primary"
-                  label="Departure"
-                  :value="false"
-                ></v-radio>
-              </v-radio-group>
-            </v-col>
+      <v-card class="pa-3">
+        <v-row>
+          <v-col cols="4">
+            <v-text-field
+              class="mx-3"
+              :rules="inputRules"
+              v-model="flightNum"
+              label="Flight number"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="4">
+            <v-text-field class="mx-3" :rules="inputRules" v-model="airport" label="Airport"></v-text-field>
+          </v-col>
+          <v-col cols="4">
+            <v-radio-group class="mx-3" row v-model="arrival">
+              <v-radio color="primary" label="Arrival" :value="true"></v-radio>
+              <v-radio color="primary" label="Departure" :value="false"></v-radio>
+            </v-radio-group>
+          </v-col>
 
-            <v-col cols="6">
-              <!-- This is the date picker -->
-              <v-menu :close-on-content-click="false">
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                    readonly
-                    :rules="dateRules"
-                    :value="formattedDate"
-                    v-on="on"
-                    label="Date"
-                    prepend-icon="date_range"
-                  ></v-text-field>
-                </template>
-                <v-date-picker v-model="flightDate"></v-date-picker>
-              </v-menu>
-            </v-col>
-            <v-col cols="6">
-              <!-- This is the time picker -->
-              <v-menu v-model="showClock" :close-on-content-click="false">
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                    readonly
-                    :rules="dateRules"
-                    :value="flightTime"
-                    v-on="on"
-                    label="Time"
-                    prepend-icon="access_time"
-                  ></v-text-field>
-                </template>
-                <v-time-picker
-                  v-if="showClock"
-                  v-model="flightTime"
-                ></v-time-picker>
-              </v-menu>
-            </v-col>
+          <v-col cols="6">
+            <!-- This is the date picker -->
+            <v-menu :close-on-content-click="false">
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  class="mx-3"
+                  readonly
+                  :rules="dateRules"
+                  :value="formattedDate"
+                  v-on="on"
+                  label="Date"
+                ></v-text-field>
+              </template>
+              <v-date-picker v-model="flightDate"></v-date-picker>
+            </v-menu>
+          </v-col>
+          <v-col cols="6">
+            <!-- This is the time picker -->
+            <v-menu v-model="showClock" :close-on-content-click="false">
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  class="mx-3"
+                  readonly
+                  :rules="dateRules"
+                  :value="flightTime"
+                  v-on="on"
+                  label="Time"
+                ></v-text-field>
+              </template>
+              <v-time-picker v-if="showClock" v-model="flightTime"></v-time-picker>
+            </v-menu>
+          </v-col>
 
-            <v-col cols="12">
-              <v-combobox
-                v-model="guests"
-                :items="allFlightGuests"
-                chips
-                multiple
-                item-text="name"
-                item-value="name"
-                label="Passengers"
-                flat
-                prepend-icon="people"
-                hide-selected
-              >
-                <template v-slot:selection="data">
-                  <v-chip
-                    small
-                    :input-value="data.selected"
-                    close
-                    @click:close="remove(data.item)"
-                  >
-                    <strong>{{ data.item.name }}</strong
-                    >&nbsp;
-                  </v-chip>
-                </template>
-              </v-combobox>
-            </v-col>
-          </v-row>
-          <v-card-actions>
-            <v-btn color="error" @click="deleteFlight" v-if="id">Delete</v-btn>
-            <v-spacer></v-spacer>
-            <v-btn @click.stop="close">Close</v-btn>
-            <v-btn color="primary" @click="submit">Submit</v-btn>
-          </v-card-actions>
-        </v-card-text>
+          <v-col cols="12">
+            <v-combobox
+              class="mx-3"
+              v-model="guests"
+              :items="allFlightGuests"
+              chips
+              multiple
+              item-text="name"
+              item-value="name"
+              label="Passengers"
+              flat
+              hide-selected
+            >
+              <template v-slot:selection="data">
+                <v-chip small :input-value="data.selected" close @click:close="remove(data.item)">
+                  <strong>{{ data.item.name }}</strong>&nbsp;
+                </v-chip>
+              </template>
+            </v-combobox>
+          </v-col>
+        </v-row>
+        <v-card-actions>
+          <v-btn color="error" @click="deleteFlight" v-if="id">Delete</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn @click.stop="close">Close</v-btn>
+          <v-btn color="primary" @click="submit">Submit</v-btn>
+        </v-card-actions>
       </v-card>
     </v-form>
   </v-dialog>

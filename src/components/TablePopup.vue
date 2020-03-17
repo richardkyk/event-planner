@@ -1,10 +1,22 @@
 <template>
-  <v-dialog persistent v-model="dialog" max-width="300px">
+  <v-dialog persistent v-model="dialog" max-width="450px">
     <v-form ref="form">
-      <v-card>
-        <v-text-field class="mx-3" ref="text" v-model="value" v-on:keyup.enter="submit"></v-text-field>
+      <v-card class="pa-3">
+        <v-text-field
+          label="Description"
+          class="mx-3"
+          ref="text"
+          v-model="value"
+          v-on:keyup.enter="submit"
+        ></v-text-field>
 
-        <v-text-field :rules="inputRules" class="mx-3" ref="tableNum" v-model="tableNum"></v-text-field>
+        <v-text-field
+          label="Table Number"
+          :rules="inputRules"
+          class="mx-3"
+          ref="tableNum"
+          v-model="tableNum"
+        ></v-text-field>
 
         <v-switch class="mx-3" v-model="isBridalTable" :label="`Bridal Table?`"></v-switch>
         <v-card-actions>
