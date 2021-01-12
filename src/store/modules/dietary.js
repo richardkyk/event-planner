@@ -32,7 +32,6 @@ export const dietary = {
   },
   actions: {
     set: (context, payload) => {
-      console.log(payload);
       context.commit("SET_DIETARY", payload);
     },
     patch: (context, payload) => {

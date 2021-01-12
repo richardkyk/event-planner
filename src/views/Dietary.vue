@@ -100,7 +100,6 @@ export default {
       });
     },
     addDietary() {
-      // const options = this.$store.getters["dietary/options"].options;
       this.options.push(this.diet);
       this.$store.dispatch("dietary/patch", {
         id: this.id,
@@ -110,7 +109,6 @@ export default {
     },
     deleteDietary(diet) {
       const index = this.options.findIndex((d) => d == diet);
-      // console.log(index);
       this.options.splice(index, 1);
       this.$store.dispatch("dietary/patch", {
         id: this.id,

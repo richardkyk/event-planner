@@ -18,7 +18,11 @@
           v-model="tableNum"
         ></v-text-field>
 
-        <v-switch class="mx-3" v-model="isBridalTable" :label="`Bridal Table?`"></v-switch>
+        <v-switch
+          class="mx-3"
+          v-model="isBridalTable"
+          :label="`Bridal Table?`"
+        ></v-switch>
         <v-card-actions>
           <v-btn color="error" @click="deleteTable">Delete</v-btn>
           <v-spacer></v-spacer>
@@ -40,9 +44,9 @@ export default {
       tableNum: null,
       isBridalTable: null,
       inputRules: [
-        v =>
-          Number.isInteger(parseInt(v)) || "Please select a valid table number"
-      ]
+        (v) =>
+          Number.isInteger(parseInt(v)) || "Please select a valid table number",
+      ],
     };
   },
   methods: {
@@ -70,13 +74,13 @@ export default {
         const tablePayload = {
           id: this.data.id,
           desc: this.value,
-          isBridalTable: this.isBridalTable
+          isBridalTable: this.isBridalTable,
         };
         if (this.tableNum !== this.data.tableNum) {
-          this.data.guests.forEach(guestId => {
+          this.data.guests.forEach((guestId) => {
             const payload = {
               id: guestId,
-              tableNum: Math.abs(parseInt(this.tableNum))
+              tableNum: Math.abs(parseInt(this.tableNum)),
             };
             this.$store.dispatch("guests/patch", payload);
           });
@@ -85,11 +89,10 @@ export default {
         }
 
         this.$store.dispatch("tables/patch", tablePayload);
-        console.log(tablePayload);
 
         this.dialog = false;
       }
-    }
-  }
+    },
+  },
 };
 </script>
