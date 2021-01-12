@@ -15,7 +15,7 @@
       <v-col col align="center">
         <v-flex class="mt-5">
           <v-avatar size="175">
-            <img src="/katanddan2.jpg" />
+            <img src="../assets/image.jpg" />
           </v-avatar>
         </v-flex>
       </v-col>
