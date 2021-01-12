@@ -9,11 +9,6 @@
         <span class="font-weight-light">Guest</span>
         <span>App</span>
       </v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn @click="signOut" text color="grey">
-        <span>Sign Out</span>
-        <v-icon right>exit_to_app</v-icon>
-      </v-btn>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" temporary app class="indigo">
@@ -47,8 +42,6 @@
 </template>
 
 <script>
-import { Firebase } from "@/firebase";
-
 export default {
   data() {
     return {
@@ -58,25 +51,10 @@ export default {
         { icon: "group", text: "Guests", route: "/guests" },
         { icon: "local_dining", text: "Tables", route: "/tables" },
         { icon: "map", text: "Floorplan", route: "/floorplan" },
-        { icon: "airplanemode_active", text: "Flights", route: "/flights" },
-        { icon: "hotel", text: "Accomodation", route: "/accommodation" },
-        { icon: "restaurant", text: "Dietary Options", route: "/dietary" }
-      ]
+        { icon: "restaurant", text: "Dietary Options", route: "/dietary" },
+      ],
     };
   },
-  methods: {
-    signOut() {
-      localStorage.removeItem("token");
-      this.$store.dispatch("setAuth", false);
-      Firebase.auth()
-        .signOut()
-        .then(() => {
-          this.$router.push("/login");
-        })
-        .catch(() => {
-          this.$router.push("/login");
-        });
-    }
-  }
+  methods: {},
 };
 </script>

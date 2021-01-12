@@ -3,7 +3,13 @@
     <v-container class="my-5" fluid>
       <v-row>
         <v-col xs12 sm6 md4 lg3>
-          <v-btn @click="addInitial()" v-if="dietary().length === 0" small text color="grey">
+          <v-btn
+            @click="addInitial()"
+            v-if="options.length === 0"
+            small
+            text
+            color="grey"
+          >
             <v-icon left small>add</v-icon>
             <span>Add Dietary Options</span>
           </v-btn>
@@ -11,11 +17,13 @@
       </v-row>
       <v-row>
         <v-col sm="12" md="6" lg="4" xl="3">
-          <v-card elevation="5" class="mx-3 mb-3" v-if="dietary().length > 0">
+          <v-card elevation="5" class="mx-3 mb-3" v-if="options.length > 0">
             <!-- This is the tool bar -->
             <v-toolbar color="indigo">
               <v-icon color="white">restaurants</v-icon>
-              <v-toolbar-title class="text-xs white--text font-weight-thin">Dietary Options</v-toolbar-title>
+              <v-toolbar-title class="text-xs white--text font-weight-thin"
+                >Dietary Options</v-toolbar-title
+              >
               <v-spacer></v-spacer>
             </v-toolbar>
 
@@ -33,7 +41,11 @@
 
             <!-- The expansion panel for the guests -->
             <v-list>
-              <v-list-group v-for="(diet, index) in dietary()" :key="index" no-action>
+              <v-list-group
+                v-for="(diet, index) in options"
+                :key="index"
+                no-action
+              >
                 <template v-slot:activator>
                   <v-list-item>
                     <v-row no-gutters>
@@ -66,39 +78,53 @@
 </template>
 
 <script>
-import { arrayUnion, arrayRemove } from "vuex-easy-firestore";
+import { uuidv4 } from "@/utility/helpers";
 export default {
   data() {
     return {
       id: null,
-      diet: ""
+      diet: "",
+      options: [],
     };
+  },
+  mounted() {
+    this.options = this.$store.getters["dietary/options"];
   },
   methods: {
     addInitial() {
+      this.options.push("");
+      this.id = uuidv4();
       this.$store.dispatch("dietary/set", {
-        options: [""]
+        id: this.id,
+        options: [""],
       });
     },
     addDietary() {
-      this.$store.dispatch("dietary/set", {
+      // const options = this.$store.getters["dietary/options"].options;
+      this.options.push(this.diet);
+      this.$store.dispatch("dietary/patch", {
         id: this.id,
-        options: arrayUnion(this.diet)
+        options: [...this.options],
       });
       this.diet = "";
     },
     deleteDietary(diet) {
+      const index = this.options.findIndex((d) => d == diet);
+      // console.log(index);
+      this.options.splice(index, 1);
       this.$store.dispatch("dietary/patch", {
         id: this.id,
-        options: arrayRemove(diet)
+        options: [...this.options],
       });
     },
     dietary() {
-      const dietary = this.$store.getters["dietary/options"];
-      this.id = dietary.id ? dietary.id : null;
-      return dietary.options ? dietary.options : [];
-    }
-  }
+      this.options = this.$store.getters["dietary/options"];
+      this.id =
+        this.$store.state.dietary.data.length == 1
+          ? this.$store.state.dietary.id
+          : null;
+    },
+  },
 };
 </script>
 

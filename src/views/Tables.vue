@@ -28,36 +28,37 @@
 
 <script>
 import TableLayout from "@/components/TableLayout";
+import { uuidv4 } from "@/utility/helpers";
 
 export default {
   components: { TableLayout },
   data() {
     return {
       tables: [],
-      guests: {}
+      guests: {},
     };
   },
   computed: {
     sortedTables() {
       return this.$store.getters["tables/sortedTables"];
-    }
+    },
   },
   methods: {
     addTable() {
       const newId = Object.keys(this.$store.state.tables.data).length + 1;
       const data = {
+        id: uuidv4(),
         tableNum: newId,
         desc: "",
         guests: [],
         coords: { x: 85, y: 85 },
-        isBridalTable: false
+        isBridalTable: false,
       };
       this.$store.dispatch("tables/set", data);
-    }
-  }
+    },
+  },
 };
 </script>
-
 
 <style lang="stylus" scoped>
 @media (min-width: 1904px) {

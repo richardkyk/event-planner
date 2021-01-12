@@ -10,48 +10,46 @@
       class="elevation-4"
       ref="dataTable"
     >
-      <template v-slot:item.accom="{ item }">{{ accomStatus(item) }}</template>
-      <template v-slot:item.flight="{ item }">
-        {{
-        flightStatus(item)
-        }}
+      <template v-slot:[`item.seatNum`]="{ item }">
+        {{ getSeatNumber(item) }}
       </template>
-      <template v-slot:item.seatNum="{ item }">
-        {{
-        getSeatNumber(item)
-        }}
-      </template>
-      <template v-slot:item.desc="{ item }">
-        {{
-        tableDesc(item.tableId)
-        }}
+      <template v-slot:[`item.desc`]="{ item }">
+        {{ tableDesc(item.tableId) }}
       </template>
 
-      <template v-slot:item.gift="props">
-        <v-edit-dialog :return-value.sync="props.item.gift" @save="save(props.item)">
+      <template v-slot:[`item.gift`]="props">
+        <v-edit-dialog
+          :return-value.sync="props.item.gift"
+          @save="save(props.item)"
+        >
           {{ props.item.gift }}
           <template v-slot:input>
-            <v-text-field v-model="props.item.gift" label="Edit" single-line counter></v-text-field>
+            <v-text-field
+              v-model="props.item.gift"
+              label="Edit"
+              single-line
+              counter
+            ></v-text-field>
           </template>
         </v-edit-dialog>
       </template>
 
-      <template v-slot:item.rsvp="{ item }">
+      <template v-slot:[`item.rsvp`]="{ item }">
         <v-chip @click="rsvp(item)" :color="getColor(item.rsvp)" dark>
-          {{
-          toTitleCase(item.rsvp)
-          }}
+          {{ toTitleCase(item.rsvp) }}
         </v-chip>
       </template>
-      <template v-slot:item.checkin="{ item }">
-        <v-chip v-if="item.checkin" @click="checkin(item)" color="green" dark>Checked In</v-chip>
-        <v-chip v-else @click="checkin(item)" color="orange" dark>Check In</v-chip>
+      <template v-slot:[`item.checkin`]="{ item }">
+        <v-chip v-if="item.checkin" @click="checkin(item)" color="green" dark
+          >Checked In</v-chip
+        >
+        <v-chip v-else @click="checkin(item)" color="orange" dark
+          >Check In</v-chip
+        >
       </template>
 
-      <template v-slot:item.time="{ item }">
-        {{
-        displayTime(item.time)
-        }}
+      <template v-slot:[`item.time`]="{ item }">
+        {{ displayTime(item.time) }}
       </template>
 
       <template v-slot:top>
@@ -66,8 +64,19 @@
                 hide-details
               ></v-text-field>
             </v-col>
-            <v-col cols="12" md="8" lg="9" :style="{ 'text-align': 'end', 'padding-top': '5px' }">
-              <v-btn class="btn-fix" small text color="primary" @click="download">
+            <v-col
+              cols="12"
+              md="8"
+              lg="9"
+              :style="{ 'text-align': 'end', 'padding-top': '5px' }"
+            >
+              <v-btn
+                class="btn-fix"
+                small
+                text
+                color="primary"
+                @click="download"
+              >
                 <v-icon left small>cloud_download</v-icon>
                 <span class="caption">Export Data</span>
               </v-btn>
@@ -94,23 +103,21 @@ export default {
         { text: "Seat", value: "seatNum" },
         { text: "Description", value: "desc" },
         { text: "Dietary", value: "dietary" },
-        { text: "Flight", value: "flight" },
-        { text: "Accommodation", value: "accom" },
         { text: "RSVP", value: "rsvp" },
         { text: "Gift", value: "gift" },
         { text: "Time", value: "time" },
-        { text: "Check in", value: "checkin" }
-      ]
+        { text: "Check in", value: "checkin" },
+      ],
     };
   },
   computed: {
     sortedGuests() {
       return this.$store.getters["guests/sortedGuests"](this.prop).map(
-        guest => {
+        (guest) => {
           return {
             ...guest,
             seatNum: this.getSeatNumber(guest),
-            desc: this.tableDesc(guest.tableId)
+            desc: this.tableDesc(guest.tableId),
           };
         }
       );
@@ -121,7 +128,7 @@ export default {
         : [];
 
       const data = [];
-      guests.forEach(guest => {
+      guests.forEach((guest) => {
         data.push({
           "Full Name": guest.name,
           "First Name": this.getName(guest.name)[0],
@@ -130,16 +137,14 @@ export default {
           Seat: this.getSeatNumber(guest),
           Description: this.tableDesc(guest.tableId),
           "Dietary Selection": guest.dietary,
-          "Accommodation Status": guest.accom ? this.accomStatus(guest) : "",
-          "Flight Status": guest.flight ? this.flightStatus(guest) : "",
           RSVP: this.toTitleCase(guest.rsvp),
           Gift: guest.gift,
           Time: this.displayTime(guest.time),
-          "Checked In": guest.checkin
+          "Checked In": guest.checkin,
         });
       });
       return data;
-    }
+    },
   },
   methods: {
     customFilter(value, search, item) {
@@ -157,28 +162,26 @@ export default {
         rsvp,
         gift,
         tableId,
-        checkin
+        checkin,
       }) => ({
         name,
         table: tableNum,
         desc: this.tableDesc(tableId),
         dietary,
-        flight: this.flightStatus(item),
-        accom: this.accomStatus(item),
         rsvp,
         gift,
-        checkin: checkin || false
+        checkin: checkin || false,
       }))(item);
       if (search.includes("|")) {
         // This will search for either of the items
-        const searchItems = searchLC.split("|").filter(el => el != "");
-        return searchItems.some(val => {
+        const searchItems = searchLC.split("|").filter((el) => el != "");
+        return searchItems.some((val) => {
           return this.filterValue(val, searchObject);
         });
       } else if (search.includes("&")) {
         // This will search for both of the items
-        const searchItems = searchLC.split("&").filter(el => el != "");
-        return searchItems.every(val => {
+        const searchItems = searchLC.split("&").filter((el) => el != "");
+        return searchItems.every((val) => {
           return this.filterValue(val, searchObject);
         });
       } else {
@@ -193,7 +196,7 @@ export default {
       if (val.includes(":")) {
         return Object.keys(searchObject)
           .map(
-            k =>
+            (k) =>
               `${k.toString().toLowerCase()}:${searchObject[k]
                 .toString()
                 .toLowerCase()}`
@@ -202,7 +205,7 @@ export default {
           .includes(val.toLowerCase());
       } else {
         return Object.keys(searchObject)
-          .map(k => `${searchObject[k].toString().toLowerCase()}`)
+          .map((k) => `${searchObject[k].toString().toLowerCase()}`)
           .join(";")
           .includes(val.toLowerCase());
       }
@@ -222,20 +225,7 @@ export default {
     toTitleCase(val) {
       return val.charAt(0).toUpperCase() + val.slice(1);
     },
-    flightStatus(guest) {
-      return guest.flight
-        ? guest.flightId.length > 0
-          ? "Assigned"
-          : "Unassigned"
-        : "";
-    },
-    accomStatus(guest) {
-      return guest.accom
-        ? guest.accomId.length > 0
-          ? "Assigned"
-          : "Unassigned"
-        : "";
-    },
+
     displayTime(unix) {
       return unix == "" ? "" : moment.unix(unix).format("h:mm A");
     },
@@ -258,13 +248,13 @@ export default {
       const tables = this.$store.getters["tables/sortedTables"];
 
       return tables
-        .filter(table => table.id == tableId)
-        .map(table => table.desc)[0];
+        .filter((table) => table.id == tableId)
+        .map((table) => table.desc)[0];
     },
     getSeatNumber(guest) {
       const seatNum =
         this.$store.getters["tables/tableGuests"](guest.tableId)
-          .map(guest => guest.id)
+          .map((guest) => guest.id)
           .indexOf(guest.id) + 1;
       return seatNum;
     },
@@ -290,7 +280,7 @@ export default {
       const date = moment().format("DD-MM-YYYY HH_mm");
       const name = `Guests ${date}.xlsx`;
       XLSX.writeFile(wb, name);
-    }
-  }
+    },
+  },
 };
 </script>

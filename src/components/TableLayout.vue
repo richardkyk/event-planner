@@ -5,10 +5,14 @@
       <v-toolbar color="indigo">
         <v-row no-gutters justify="space-between">
           <v-col cols="2" align-self="center" class="text-center mr-1">
-            <span class="display-1 white--text font-weight-thin">{{ table.tableNum }}</span>
+            <span class="display-1 white--text font-weight-thin">{{
+              table.tableNum
+            }}</span>
           </v-col>
           <v-col cols="8" align-self="center">
-            <v-toolbar-title class="subheading white--text font-weight-thin">{{ table.desc }}</v-toolbar-title>
+            <v-toolbar-title class="subheading white--text font-weight-thin">{{
+              table.desc
+            }}</v-toolbar-title>
           </v-col>
           <v-col cols="1" align-self="center">
             <!-- <v-btn icon> -->
@@ -32,8 +36,16 @@
 
       <!-- The expansion panel for the guests -->
       <v-list two-line>
-        <draggable v-model="tableGuests" v-bind="{ group: 'people' }" style="min-height: 150px">
-          <v-list-group v-for="(guest, index) in tableGuests" :key="index" no-action>
+        <draggable
+          v-model="tableGuests"
+          v-bind="{ group: 'people' }"
+          style="min-height: 200px"
+        >
+          <v-list-group
+            v-for="(guest, index) in tableGuests"
+            :key="index"
+            no-action
+          >
             <template v-slot:activator>
               <v-list-item-content>
                 <v-row no-gutters>
@@ -41,32 +53,20 @@
                     <v-list-item-title>{{ index + 1 }}</v-list-item-title>
                   </v-col>
                   <v-col cols="8">
-                    <v-list-item-title class="text-truncate">{{ guest.name }}</v-list-item-title>
+                    <v-list-item-title class="text-truncate">{{
+                      guest.name
+                    }}</v-list-item-title>
 
-                    <v-list-item-subtitle>{{ guest.dietary }}</v-list-item-subtitle>
-                  </v-col>
-                  <v-spacer></v-spacer>
-                  <v-col v-if="guest.flight" cols="1">
-                    <v-icon size="20">flight</v-icon>
-                  </v-col>
-                  <v-col v-if="guest.accom" cols="1">
-                    <v-icon size="20">hotel</v-icon>
+                    <v-list-item-subtitle>{{
+                      guest.dietary
+                    }}</v-list-item-subtitle>
                   </v-col>
                 </v-row>
               </v-list-item-content>
             </template>
-            <!-- The icons for flight, accomodation, edit and delete -->
+            <!-- The icons for diet, edit and delete -->
             <v-list-item>
               <v-row no-gutters>
-                <!-- Toggle flight -->
-                <v-col text-xs-center>
-                  <v-icon @click="toggleIcon(guest, 'flight', !guest.flight)">airplanemode_active</v-icon>
-                </v-col>
-                <!-- Toggle accommodation -->
-                <v-col text-xs-center>
-                  <v-icon @click="toggleIcon(guest, 'accom', !guest.accom)">hotel</v-icon>
-                </v-col>
-
                 <!-- Dietary options -->
                 <v-col text-xs-center>
                   <v-menu>
@@ -112,14 +112,14 @@
 import draggable from "vuedraggable";
 import TablePopup from "@/components/TablePopup";
 import GuestPopup from "@/components/GuestPopup";
-import { arrayUnion, arrayRemove } from "vuex-easy-firestore";
+import { uuidv4 } from "@/utility/helpers";
 
 export default {
   components: { TablePopup, draggable, GuestPopup },
   props: ["table"],
   data() {
     return {
-      name: ""
+      name: "",
     };
   },
   computed: {
@@ -129,30 +129,28 @@ export default {
       },
       set(value) {
         const guestIdChange = value
-          .filter(guest => guest.tableId != this.table.id)
-          .map(guest => guest.id);
+          .filter((guest) => guest.tableId != this.table.id)
+          .map((guest) => guest.id);
 
-        guestIdChange.map(id => {
+        guestIdChange.map((id) => {
           const payload = {
             id,
             tableNum: this.table.tableNum,
-            tableId: this.table.id
+            tableId: this.table.id,
           };
           this.$store.dispatch("guests/patch", payload);
         });
 
         const tablePayload = {
           id: this.table.id,
-          guests: value.map(guest => guest.id)
+          guests: value.map((guest) => guest.id),
         };
         this.$store.dispatch("tables/patch", tablePayload);
-      }
+      },
     },
     dietary() {
-      return this.$store.getters["dietary/options"].options
-        ? this.$store.getters["dietary/options"].options
-        : [];
-    }
+      return this.$store.getters["dietary/options"];
+    },
   },
   methods: {
     editTable(data) {
@@ -163,90 +161,54 @@ export default {
     },
 
     addGuest() {
-      const id = this.$store.getters["guests/dbRef"].doc().id;
+      const id = uuidv4();
       const tableId = this.table.id;
+      const table = this.$store.getters["tables/byId"](tableId);
       const guestData = {
-        accom: false,
-        accomId: [],
         checkin: false,
         dietary: "",
-        flight: false,
-        flightId: [],
         gift: "",
         id,
         name: this.name.trim(),
         rsvp: "unsent",
         tableId,
         tableNum: this.table.tableNum,
-        time: ""
+        time: "",
       };
       this.$store.dispatch("guests/set", guestData);
       this.$store.dispatch("tables/patch", {
         id: tableId,
-        guests: arrayUnion(id)
+        guests: [...table.guests, guestData.id],
       });
       this.name = "";
     },
     removeGuest(guest) {
       const tableId = this.table.id;
+      const table = this.$store.getters["tables/byId"](tableId);
+      const guestIndex = table.guests.findIndex(
+        (guestId) => guestId == guest.id
+      );
+      if (guestIndex != -1) {
+        table.guests.splice(guestIndex, 1);
+      }
       this.$store.dispatch("tables/patch", {
         id: tableId,
-        guests: arrayRemove(guest.id)
+        guests: [...table.guests],
       });
-
-      if (guest.accomId) {
-        guest.accomId.forEach(accomId =>
-          this.$store.dispatch("accommodations/patch", {
-            id: accomId,
-            guests: arrayRemove(guest.id)
-          })
-        );
-      }
-
-      if (guest.flightId) {
-        guest.flightId.forEach(flightId =>
-          this.$store.dispatch("flights/patch", {
-            id: flightId,
-            guests: arrayRemove(guest.id)
-          })
-        );
-      }
 
       this.$store.dispatch("guests/delete", guest.id);
     },
     toggleIcon(guest, type, value) {
       const data = {
         id: guest.id,
-        [type]: value
+        [type]: value,
       };
       this.$store.dispatch("guests/patch", data);
-      if (type == "flight" && value == false) {
-        guest.flightId.forEach(id => {
-          this.$store.dispatch("flights/patch", {
-            id,
-            guests: arrayRemove(guest.id)
-          });
-        });
-        this.$store.dispatch("guests/patch", { id: guest.id, flightId: [] });
-      }
-
-      if (type == "accom" && value == false) {
-        guest.accomId.forEach(id => {
-          this.$store.dispatch("accommodations/patch", {
-            id,
-            guests: arrayRemove(guest.id)
-          });
-        });
-        this.$store.dispatch("guests/patch", {
-          id: guest.id,
-          accomId: []
-        });
-      }
     },
     selectDietary(guest, item) {
       this.$store.dispatch("guests/patch", { id: guest.id, dietary: item });
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="stylus" scoped>

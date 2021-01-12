@@ -1,9 +1,9 @@
 <template>
   <v-app class="grey lighten-4">
     <Navbar v-if="$route.name !== 'login'" />
-    <v-content class="mx-4 mb-4">
+    <v-main class="mx-4 mb-4">
       <router-view></router-view>
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 
@@ -12,6 +12,6 @@ import Navbar from "@/components/Navbar";
 
 export default {
   name: "App",
-  components: { Navbar }
+  components: { Navbar },
 };
 </script>
